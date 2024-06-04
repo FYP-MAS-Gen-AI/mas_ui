@@ -91,7 +91,7 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
 
     return (
         <div className="relative">
-            {imageUrl && <img ref={imgRef} src={imageUrl} alt="Selected" className="w-full" onLoad={initializeCanvas} />}
+            {imageUrl && <img ref={imgRef} src={imageUrl} alt="Selected" className="w-full" crossOrigin="anonymous" onLoad={initializeCanvas} />}
             <canvas
                 ref={canvasRef}
                 className="absolute top-0 left-0 w-full h-full"
