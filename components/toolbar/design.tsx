@@ -1,6 +1,6 @@
 import React from 'react';
-import { AdvancedImage } from '@cloudinary/react';
-import { Cloudinary } from '@cloudinary/url-gen';
+import {AdvancedImage} from '@cloudinary/react';
+import {Cloudinary} from '@cloudinary/url-gen';
 import {sepia} from "@cloudinary/url-gen/actions/effect";
 
 interface ToolbarProps {
@@ -37,10 +37,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <>
                     <div className="text-gray-700 font-bold mb-4">Upload Image</div>
                     <div className="mb-4">
-                        <AdvancedImage cldImg={myImage} />
+                        <AdvancedImage cldImg={myImage}/>
                     </div>
-                    <input type="file" onChange={onFileChange} className="mb-2" />
-                    <button onClick={onUpload} className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+                    <input type="file" onChange={onFileChange} className="mb-2"/>
+                    <button onClick={onUpload}
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
                         Upload Image
                     </button>
                     {uploadedImageUrl && <p className="mt-2 text-sm">Image URL: {uploadedImageUrl}</p>}
@@ -54,7 +55,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                         <div className="mt-2">
                             {selectedImages.map((file) => (
                                 <div key={file.id} className="mb-2">
-                                    <img src={file.link} alt={file.title} className="w-full rounded" />
+                                    <img src={file.link} alt={file.title} className="w-full rounded"/>
                                 </div>
                             ))}
                         </div>

@@ -32,8 +32,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
             {mode === 'Design' && (
                 <>
                     <div className="text-gray-700 font-bold mb-4">Upload Image</div>
-                    <input type="file" onChange={onFileChange} className="mb-2" />
-                    <button onClick={onUpload} className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+                    <input type="file" onChange={onFileChange} className="mb-2"/>
+                    <button onClick={onUpload}
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
                         Upload Image
                     </button>
                     {uploadedImageUrl && <p className="mt-2 text-sm">Image URL: {uploadedImageUrl}</p>}
@@ -47,7 +48,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                         <div className="mt-2">
                             {selectedImages.map((file) => (
                                 <div key={file.id} className="mb-2">
-                                    <img src={file.link} alt={file.title} className="w-full rounded" />
+                                    <img src={file.link} alt={file.title} className="w-full rounded"/>
                                 </div>
                             ))}
                         </div>
@@ -58,13 +59,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <div>
                     <p>Edit Toolbar - Draw on the image to create a mask</p>
                     <div className="mt-4">
-                        <button onClick={() => setTool('brush')} className={`py-2 px-4 rounded mr-2 ${tool === 'brush' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
+                        <button onClick={() => setTool('brush')}
+                                className={`py-2 px-4 rounded mr-2 ${tool === 'brush' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
                             Brush
                         </button>
-                        <button onClick={() => setTool('eraser')} className={`py-2 px-4 rounded mr-2 ${tool === 'eraser' ? 'bg-red-500 text-white' : 'bg-gray-300 text-black'}`}>
+                        <button onClick={() => setTool('eraser')}
+                                className={`py-2 px-4 rounded mr-2 ${tool === 'eraser' ? 'bg-red-500 text-white' : 'bg-gray-300 text-black'}`}>
                             Eraser
                         </button>
-                        <button onClick={() => setTool('none')} className={`py-2 px-4 rounded ${tool === 'none' ? 'bg-yellow-500 text-white' : 'bg-gray-300 text-black'}`}>
+                        <button onClick={() => setTool('none')}
+                                className={`py-2 px-4 rounded ${tool === 'none' ? 'bg-yellow-500 text-white' : 'bg-gray-300 text-black'}`}>
                             Select
                         </button>
                     </div>

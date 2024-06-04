@@ -1,13 +1,13 @@
 'use client';
 
-import { CreateUserInput, createUserSchema } from '@/lib/user-schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { signUpWithEmailAndPassword } from '../_actions';
+import {CreateUserInput, createUserSchema} from '@/lib/user-schema';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {SubmitHandler, useForm} from 'react-hook-form';
+import {signUpWithEmailAndPassword} from '../_actions';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import {useRouter} from 'next/navigation';
+import {useState, useTransition} from 'react';
+import {FiEye, FiEyeOff} from 'react-icons/fi';
 
 export const RegisterForm = () => {
     const [isPending, startTransition] = useTransition();
@@ -23,7 +23,7 @@ export const RegisterForm = () => {
         reset,
         handleSubmit,
         register,
-        formState: { errors },
+        formState: {errors},
     } = methods;
 
     const onSubmitHandler: SubmitHandler<CreateUserInput> = (values) => {
@@ -32,11 +32,11 @@ export const RegisterForm = () => {
                 data: values,
                 emailRedirectTo: `${location.origin}/auth/callback`,
             });
-            const { error } = JSON.parse(result);
+            const {error} = JSON.parse(result);
             if (error?.message) {
                 toast.error(error.message);
                 console.log('Error message', error.message);
-                reset({ password: '' });
+                reset({password: ''});
                 return;
             }
 
@@ -86,7 +86,7 @@ export const RegisterForm = () => {
                     className='absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer'
                     onClick={() => setShowPassword(!showPassword)}
                 >
-                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                    {showPassword ? <FiEyeOff/> : <FiEye/>}
                 </div>
                 {errors['password'] && (
                     <span className='text-red-500 text-xs pt-1 block'>
@@ -105,7 +105,7 @@ export const RegisterForm = () => {
                     className='absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer'
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                    {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                    {showConfirmPassword ? <FiEyeOff/> : <FiEye/>}
                 </div>
                 {errors['passwordConfirm'] && (
                     <span className='text-red-500 text-xs pt-1 block'>
@@ -115,7 +115,7 @@ export const RegisterForm = () => {
             </div>
             <button
                 type='submit'
-                style={{ backgroundColor: `${isPending ? '#ccc' : '#3446eb'}` }}
+                style={{backgroundColor: `${isPending ? '#ccc' : '#3446eb'}`}}
                 className='inline-block px-7 py-4 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full'
                 disabled={isPending}
             >

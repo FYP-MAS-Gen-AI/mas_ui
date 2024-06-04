@@ -1,24 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 import NavBar from '@/components/navbar/NavBar';
 import Toolbar from '@/components/toolbar/Toolbar';
 import InputSection from '@/components/input_section/InputSection';
 import DrawingCanvas from '@/components/toolbar/DrawingContext';
-import {
-    uploadImageToCloudinary,
-    saveUrlToSupabase,
-    generateImage
-} from '@/components/apis/Apis';
+import {generateImage, saveUrlToSupabase, uploadImageToCloudinary} from '@/components/apis/Apis';
 import useSupabaseClient from "@/lib/supabase/client";
 
 const BASE_URL = "http://127.0.0.1:8000";
-import getUserSession from '@/lib/getUserSession';
-import {redirect} from 'next/navigation';
 
 
-export default function Create (){
+export default function Create() {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState<string>('');
     const [selectedModel, setSelectedModel] = useState<string>('fooocus');
@@ -38,7 +32,7 @@ export default function Create (){
 
     useEffect(() => {
         const fetchFiles = async () => {
-            const { data, error } = await supabase.from('files').select('*');
+            const {data, error} = await supabase.from('files').select('*');
             if (error) {
                 console.error('Error fetching files from Supabase', error);
             } else {
@@ -166,7 +160,7 @@ export default function Create (){
             console.log("Generating image with Text");
             const data = await generateImage(`${BASE_URL}/textToImage`, {
                 model: selectedModel,
-                input: { prompt: inputValue }
+                input: {prompt: inputValue}
             });
 
             console.log("data", data);
@@ -196,7 +190,7 @@ export default function Create (){
 
     return (
         <div className="min-h-screen flex flex-col">
-            <NavBar selectedTab={selectedTab} onSelectTab={setSelectedTab} />
+            <NavBar selectedTab={selectedTab} onSelectTab={setSelectedTab}/>
             <div className="flex flex-1">
                 <Toolbar
                     mode={selectedTab}
@@ -241,7 +235,7 @@ export default function Create (){
                                     setSelectedImages([...selectedImages, file]);
                                     setShowModal(false);
                                 }}>
-                                    <img src={file.link} alt={file.title} className="w-full rounded" />
+                                    <img src={file.link} alt={file.title} className="w-full rounded"/>
                                 </div>
                             ))}
                         </div>

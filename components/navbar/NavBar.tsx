@@ -5,7 +5,7 @@ interface NavBarProps {
     onSelectTab: (tab: string) => void;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ selectedTab, onSelectTab }) => {
+const NavBar: React.FC<NavBarProps> = ({selectedTab, onSelectTab}) => {
     return (
         <div className="bg-gray-800 text-white flex p-4">
             {['Design', 'Edit', 'History'].map((tab) => (

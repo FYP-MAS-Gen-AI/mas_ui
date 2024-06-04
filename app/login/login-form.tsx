@@ -1,15 +1,15 @@
 'use client';
 
-import { LoginUserInput, loginUserSchema } from '@/lib/user-schema';
-import { zodResolver } from '@hookform/resolvers/zod';
+import {LoginUserInput, loginUserSchema} from '@/lib/user-schema';
+import {zodResolver} from '@hookform/resolvers/zod';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { signInWithEmailAndPassword } from '../_actions';
+import {useRouter} from 'next/navigation';
+import {useState, useTransition} from 'react';
+import {SubmitHandler, useForm} from 'react-hook-form';
+import {signInWithEmailAndPassword} from '../_actions';
 import toast from 'react-hot-toast';
 import useSupabaseClient from '@/lib/supabase/client';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import {FiEye, FiEyeOff} from 'react-icons/fi';
 
 export const LoginForm = () => {
     const router = useRouter();
@@ -26,14 +26,14 @@ export const LoginForm = () => {
         reset,
         handleSubmit,
         register,
-        formState: { errors },
+        formState: {errors},
     } = methods;
 
     const onSubmitHandler: SubmitHandler<LoginUserInput> = async (values) => {
         startTransition(async () => {
             const result = await signInWithEmailAndPassword(values);
             const parsedResult = JSON.parse(result);
-            const { error, data } = parsedResult;
+            const {error, data} = parsedResult;
 
             if (error) {
                 const errorMessage = error.message || 'There was an error with the login. Please try again.';
@@ -101,7 +101,7 @@ export const LoginForm = () => {
                     className='absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer'
                     onClick={() => setShowPassword(!showPassword)}
                 >
-                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                    {showPassword ? <FiEyeOff/> : <FiEye/>}
                 </div>
                 {errors['password'] && (
                     <span className='text-red-500 text-xs pt-1 block'>
@@ -111,7 +111,7 @@ export const LoginForm = () => {
             </div>
             <button
                 type='submit'
-                style={{ backgroundColor: `${isPending ? '#ccc' : '#3446eb'}` }}
+                style={{backgroundColor: `${isPending ? '#ccc' : '#3446eb'}`}}
                 className='inline-block px-7 py-4 bg-blue-600 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full'
                 disabled={isPending}
             >
@@ -125,7 +125,7 @@ export const LoginForm = () => {
 
             <a
                 className='px-7 py-2 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center mb-3'
-                style={{ backgroundColor: '#3b5998' }}
+                style={{backgroundColor: '#3b5998'}}
                 onClick={loginWithGoogle}
                 role='button'
             >
@@ -133,7 +133,7 @@ export const LoginForm = () => {
                     className='pr-2'
                     src='/images/google.svg'
                     alt=''
-                    style={{ height: '2rem' }}
+                    style={{height: '2rem'}}
                     width={35}
                     height={35}
                 />
@@ -141,7 +141,7 @@ export const LoginForm = () => {
             </a>
             <a
                 className='px-7 py-2 text-white font-medium text-sm leading-snug uppercase rounded shadow-md hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full flex justify-center items-center'
-                style={{ backgroundColor: '#55acee' }}
+                style={{backgroundColor: '#55acee'}}
                 onClick={loginWithGitHub}
                 role='button'
             >

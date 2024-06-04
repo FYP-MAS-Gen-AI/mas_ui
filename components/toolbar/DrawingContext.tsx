@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 
 interface DrawingCanvasProps {
     imageUrl: string | null;
@@ -6,7 +6,7 @@ interface DrawingCanvasProps {
     tool: string;
 }
 
-const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasProps, ref) => {
+const DrawingCanvas = forwardRef(({imageUrl, brushSize, tool}: DrawingCanvasProps, ref) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const imgRef = useRef<HTMLImageElement | null>(null);
     const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -53,7 +53,7 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (tool === 'none') return;
-        const { offsetX, offsetY } = e.nativeEvent;
+        const {offsetX, offsetY} = e.nativeEvent;
         if (ctxRef.current) {
             ctxRef.current.beginPath();
             ctxRef.current.moveTo(offsetX, offsetY);
@@ -70,14 +70,14 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawingRef.current || !ctxRef.current) return;
-        const { offsetX, offsetY } = e.nativeEvent;
+        const {offsetX, offsetY} = e.nativeEvent;
         ctxRef.current.lineTo(offsetX, offsetY);
         ctxRef.current.stroke();
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const { offsetX, offsetY } = e.nativeEvent;
-        setMousePosition({ x: offsetX, y: offsetY });
+        const {offsetX, offsetY} = e.nativeEvent;
+        setMousePosition({x: offsetX, y: offsetY});
     };
 
     useImperativeHandle(ref, () => ({
@@ -91,14 +91,18 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
 
     return (
         <div className="relative">
-            {imageUrl && <img ref={imgRef} src={imageUrl} alt="Selected" className="w-full" crossOrigin="anonymous" onLoad={initializeCanvas} />}
+            {imageUrl && <img ref={imgRef} src={imageUrl} alt="Selected" className="w-full" crossOrigin="anonymous"
+                              onLoad={initializeCanvas}/>}
             <canvas
                 ref={canvasRef}
                 className="absolute top-0 left-0 w-full h-full"
-                style={{ background: 'transparent' }}
+                style={{background: 'transparent'}}
                 onMouseDown={startDrawing}
                 onMouseUp={finishDrawing}
-                onMouseMove={(e) => { draw(e); handleMouseMove(e); }}
+                onMouseMove={(e) => {
+                    draw(e);
+                    handleMouseMove(e);
+                }}
             />
             {mousePosition && tool !== 'none' && (
                 <div

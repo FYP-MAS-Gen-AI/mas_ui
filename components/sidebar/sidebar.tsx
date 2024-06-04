@@ -1,8 +1,19 @@
-import { FiHome, FiMenu, FiSettings, FiUser, FiX, FiDatabase, FiLink, FiFile, FiFileText, FiChevronDown } from "react-icons/fi";
-import React, { useState } from "react";
+import {
+    FiChevronDown,
+    FiDatabase,
+    FiFile,
+    FiFileText,
+    FiHome,
+    FiLink,
+    FiMenu,
+    FiSettings,
+    FiUser,
+    FiX
+} from "react-icons/fi";
+import React, {useState} from "react";
 import Link from "next/link";
 
-export function Sidebar({ isSidebarOpen, setSidebarOpen }) {
+export function Sidebar({isSidebarOpen, setSidebarOpen}) {
     const [isDataSubmenuOpen, setDataSubmenuOpen] = useState(false);
 
     const toggleDataSubmenu = () => {
@@ -10,7 +21,8 @@ export function Sidebar({ isSidebarOpen, setSidebarOpen }) {
     };
 
     return (
-        <div className={`flex flex-col bg-white p-4 transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'} border-r border-gray-200 shadow-lg`}>
+        <div
+            className={`flex flex-col bg-white p-4 transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'} border-r border-gray-200 shadow-lg`}>
             <div className="flex justify-between items-center mb-4">
                 <h1 className={`text-gray-800 text-xl font-bold ${!isSidebarOpen && 'hidden'}`}>Dilmah</h1>
                 <button
@@ -22,7 +34,8 @@ export function Sidebar({ isSidebarOpen, setSidebarOpen }) {
             </div>
             <nav className="mt-10">
                 <Link href="/dashboard/chat">
-                    <div className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
+                    <div
+                        className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
                         <FiHome size={24}/>
                         {isSidebarOpen && <span className="ml-4 text-base font-medium">Chat</span>}
                     </div>
@@ -43,19 +56,22 @@ export function Sidebar({ isSidebarOpen, setSidebarOpen }) {
                     {isDataSubmenuOpen && isSidebarOpen && (
                         <div className="ml-8 mt-2">
                             <Link href="/dashboard/url">
-                                <div className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
+                                <div
+                                    className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
                                     <FiLink size={20}/>
                                     <span className="ml-4 text-base font-medium">URL</span>
                                 </div>
                             </Link>
                             <Link href="/dashboard/file">
-                                <div className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
+                                <div
+                                    className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
                                     <FiFile size={20}/>
                                     <span className="ml-4 text-base font-medium">File</span>
                                 </div>
                             </Link>
                             <Link href="/dashboard/text">
-                                <div className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
+                                <div
+                                    className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
                                     <FiFileText size={20}/>
                                     <span className="ml-4 text-base font-medium">Text</span>
                                 </div>
@@ -64,13 +80,15 @@ export function Sidebar({ isSidebarOpen, setSidebarOpen }) {
                     )}
                 </div>
                 <Link href="#">
-                    <div className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
+                    <div
+                        className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
                         <FiUser size={24}/>
                         {isSidebarOpen && <span className="ml-4 text-base font-medium">Profile</span>}
                     </div>
                 </Link>
                 <Link href="#">
-                    <div className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
+                    <div
+                        className="flex items-center text-gray-800 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 cursor-pointer">
                         <FiSettings size={24}/>
                         {isSidebarOpen && <span className="ml-4 text-base font-medium">Settings</span>}
                     </div>

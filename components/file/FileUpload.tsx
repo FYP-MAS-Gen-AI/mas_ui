@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { AdvancedImage } from '@cloudinary/react';
-import { Cloudinary } from '@cloudinary/url-gen';
-import { sepia } from '@cloudinary/url-gen/actions/effect';
+import {useState} from 'react';
+import {AdvancedImage} from '@cloudinary/react';
+import {Cloudinary} from '@cloudinary/url-gen';
+import {sepia} from '@cloudinary/url-gen/actions/effect';
 
-export default function History({ model, setModel }) {
+export default function History({model, setModel}) {
     const cld = new Cloudinary({
         cloud: {
             cloudName: 'det0mvsek'
@@ -42,8 +42,8 @@ export default function History({ model, setModel }) {
 
     return (
         <div>
-            <AdvancedImage cldImg={myImage} />
-            <input type="file" onChange={handleFileChange} />
+            <AdvancedImage cldImg={myImage}/>
+            <input type="file" onChange={handleFileChange}/>
             <button onClick={handleUpload}>Upload Image</button>
             {imageUrl && <p>Image URL: {imageUrl}</p>}
         </div>
