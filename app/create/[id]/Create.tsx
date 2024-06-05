@@ -63,21 +63,6 @@ export default function Create({user}) {
         }
     };
 
-    const fetchImageIdByUrl = async (url) => {
-        const { data, error } = await supabase
-            .from('images')
-            .select('id')
-            .eq('url', url)
-            .single();
-
-        if (error) {
-            console.error(`Error fetching image ID from Supabase`, error);
-            return null;
-        } else {
-            return data.id;
-        }
-    };
-
     const handleGenerateImage = async () => {
         console.log("Generating image with input:", inputValue);
 
@@ -87,7 +72,6 @@ export default function Create({user}) {
             console.log("maskDataUrl", maskDataUrl);
             const maskUrl = await uploadImageToCloudinary(maskDataUrl);
             console.log("maskUrl", maskUrl);
-
             if (maskUrl) {
                 await saveUrlToSupabase(supabase, 'images', maskUrl, user.id, false, 'mask');
 
@@ -118,15 +102,12 @@ export default function Create({user}) {
                     const generatedImageUrl = data[0].url;
                     setImageUrl(generatedImageUrl);
 
-                    const generatedImageId = await fetchImageIdByUrl(generatedImageUrl);
-                    const maskImageId = await fetchImageIdByUrl(maskUrl);
-
                     console.log("Generated image URL:", generatedImageUrl);
                     if (generatedImageUrl) {
                         const {data, error} = await supabase
                             .from('messages')
-                            .insert([{session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageId,
-                                input_img_id: imageUrl, ref_img_id: maskImageId, model_id: selectedModel}])
+                            .insert([{session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageUrl,
+                                input_img_id: imageUrl, ref_img_id: maskUrl, model_id: selectedModel}])
                             .select();
 
                         if (error) {
@@ -167,12 +148,10 @@ export default function Create({user}) {
 
                 console.log("Generated image URL:", generatedImageUrl);
                 if (generatedImageUrl) {
-                    const generatedImageId = await fetchImageIdByUrl(generatedImageUrl);
-                    const selectedImageId = await fetchImageIdByUrl(selectedImage.url);
                     const {data, error} = await supabase
                         .from('messages')
-                        .insert([{session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageId,
-                            input_img_id: imageUrl, ref_img_id: selectedImageId, model_id: selectedModel}])
+                        .insert([{session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageUrl,
+                            input_img_id: imageUrl, ref_img_id: selectedImage.url, model_id: selectedModel}])
                         .select();
 
                     if (error) {
@@ -199,10 +178,9 @@ export default function Create({user}) {
 
                 console.log("Generated image URL:", generatedImageUrl);
                 if (generatedImageUrl) {
-                    const generatedImageId = await fetchImageIdByUrl(generatedImageUrl);
                     const {data, error} = await supabase
                         .from('messages')
-                        .insert([{session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageId,
+                        .insert([{session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageUrl,
                             model_id: selectedModel}])
                         .select();
 
@@ -221,7 +199,7 @@ export default function Create({user}) {
     return (
         <div className="min-h-screen flex flex-col">
             <NavBar selectedTab={selectedTab} onSelectTab={setSelectedTab} />
-            <div className="flex flex-1">
+            <div className="flex flex-1 mt-12">
                 <Toolbar
                     mode={selectedTab}
                     imageUrl={uploadedImageUrl}

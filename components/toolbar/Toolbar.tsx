@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import useSupabaseClient from "@/lib/supabase/client";
 
 interface ToolbarProps {
     mode: string;
@@ -31,6 +32,44 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              setTool,
                                              sessionID,
                                          }) => {
+    const [messages, setMessages] = useState<any[]>([]);
+    const supabase = useSupabaseClient();
+
+    const fetchMessages = async () => {
+        const { data, error } = await supabase
+            .from('messages')
+            .select('*')
+            .eq('session_id', sessionID);
+
+        if (error) {
+            console.error('Error fetching messages from Supabase', error);
+        } else {
+            setMessages(data || []);
+        }
+    };
+
+    useEffect(() => {
+        if (sessionID) {
+            fetchMessages();
+        }
+
+        const channel = supabase
+            .channel('realtime messages')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `session_id=eq.${sessionID}` }, payload => {
+                console.log('Change received!', payload);
+                fetchMessages(); // Refetch messages on any change
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [sessionID, supabase]);
+
+    useEffect(() => {
+        console.log('Messages updated', messages);
+    }, [messages]);
+
     return (
         <div className="w-64 bg-gray-200 p-4">
             {mode === 'Design' && (
@@ -61,7 +100,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
             )}
             {mode === 'Edit' && (
                 <div>
-                    {/*<p>Edit Toolbar - Draw on the image to create a mask</p>*/}
                     <div className="mt-4">
                         <button onClick={() => setTool('none')}
                                 className={`py-2 px-4 rounded ${tool === 'none' ? 'bg-yellow-500 text-white' : 'bg-gray-300 text-black'}`}>
@@ -91,7 +129,36 @@ const Toolbar: React.FC<ToolbarProps> = ({
             )}
             {mode === 'History' && (
                 <div>
-                    {/*<p>History Toolbar - Show project history here</p>*/}
+                    <div className="text-gray-700 font-bold mb-4">Project History</div>
+                    <div className="space-y-4">
+                        {messages.map((message) => (
+                            <div key={message.id} className="bg-white p-2 rounded shadow">
+                                <p><strong>Type:</strong> {message.type}</p>
+                                <p><strong>Text:</strong> {message.text}</p>
+                                {message.gen_img_id && (
+                                    <div>
+                                        <strong>Generated Image:</strong>
+                                        <img src={message.gen_img_id} alt={`Generated ${message.id}`}
+                                             className="w-full rounded mt-2" />
+                                    </div>
+                                )}
+                                {message.input_img_id && (
+                                    <div>
+                                        <strong>Input Image:</strong>
+                                        <img src={message.input_img_id} alt={`Input ${message.id}`}
+                                             className="w-full rounded mt-2" />
+                                    </div>
+                                )}
+                                {message.ref_img_id && (
+                                    <div>
+                                        <strong>Reference Image:</strong>
+                                        <img src={message.ref_img_id} alt={`Reference ${message.id}`}
+                                             className="w-full rounded mt-2" />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>
