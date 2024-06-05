@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getSupabaseBrowserClient } from "@/lib/supabase/client"; // Ensure the correct path
 
 interface InputSectionProps {
     mode: string;
@@ -10,6 +11,11 @@ interface InputSectionProps {
     onModeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
+interface Model {
+    code_name: string;
+    show_name: string;
+}
+
 const InputSection: React.FC<InputSectionProps> = ({
                                                        mode,
                                                        selectedModel,
@@ -19,6 +25,22 @@ const InputSection: React.FC<InputSectionProps> = ({
                                                        onGenerateImage,
                                                        onModeChange,
                                                    }) => {
+    const [models, setModels] = useState<Model[]>([]);
+    const supabase = getSupabaseBrowserClient();
+
+    useEffect(() => {
+        const fetchModels = async () => {
+            const { data, error } = await supabase.from('models').select('code_name, show_name').eq('enable', true);
+            if (error) {
+                console.error('Error fetching models:', error);
+            } else {
+                setModels(data);
+            }
+        };
+
+        fetchModels();
+    }, []);
+
     return (
         <div className="bg-white p-4 border-t border-gray-200">
             <select
@@ -26,18 +48,20 @@ const InputSection: React.FC<InputSectionProps> = ({
                 onChange={onModeChange}
                 className="border rounded px-4 py-2 w-full mb-2"
             >
-                <option value="Text -> Image">Text -> Image</option>
-                <option value="Text + Image -> Image">Text + Image -> Image</option>
-                <option value="Edit">Edit (Inpaint/Outpaint)</option>
+                <option value="Text to Image">Text to Image</option>
+                <option value="Text and Image to Image">Text and Image to Image</option>
+                <option value="Edit (Inpaint/Outpaint)">Edit (Inpaint/Outpaint)</option>
             </select>
             <select
                 value={selectedModel}
                 onChange={onModelChange}
                 className="border rounded px-4 py-2 w-full mb-2"
             >
-                <option value="fooocus">Fooocus</option>
-                <option value="stability">Stability</option>
-                <option value="getimg">Getimg</option>
+                {models.map(model => (
+                    <option key={model.code_name} value={model.code_name}>
+                        {model.show_name}
+                    </option>
+                ))}
             </select>
             <input
                 type="text"

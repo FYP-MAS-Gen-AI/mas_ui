@@ -1,38 +1,37 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import NavBar from '@/components/navbar/NavBar';
 import Toolbar from '@/components/toolbar/Toolbar';
 import InputSection from '@/components/input_section/InputSection';
 import DrawingCanvas from '@/components/toolbar/DrawingContext';
-import {generateImage, saveUrlToSupabase, uploadImageToCloudinary} from '@/components/apis/Apis';
+import { generateImage, saveUrlToSupabase, uploadImageToCloudinary } from '@/components/apis/Apis';
 import useSupabaseClient from "@/lib/supabase/client";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
-
-export default function Create() {
+export default function Create({user}) {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState<string>('');
-    const [selectedModel, setSelectedModel] = useState<string>('fooocus');
+    const [selectedModel, setSelectedModel] = useState<string>('sd-getai');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
     const [files, setFiles] = useState<any[]>([]);
-    const [selectedImages, setSelectedImages] = useState<any[]>([]);
+    const [selectedImage, setSelectedImage] = useState<any>(null);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('Text -> Image');
     const [selectedTab, setSelectedTab] = useState<string>('Design');
     const [brushSize, setBrushSize] = useState<number>(5);
     const [tool, setTool] = useState<string>('brush');
 
-    const canvasRef = useRef<any>(null); // Use a ref to get the canvas data URL
+    const canvasRef = useRef<any>(null);
 
     const supabase = useSupabaseClient();
 
     useEffect(() => {
         const fetchFiles = async () => {
-            const {data, error} = await supabase.from('files').select('*');
+            const { data, error } = await supabase.from('images').select('*').eq("ref" , true);
             if (error) {
                 console.error('Error fetching files from Supabase', error);
             } else {
@@ -53,7 +52,7 @@ export default function Create() {
             const url = await uploadImageToCloudinary(imageFile);
             if (url) {
                 setUploadedImageUrl(url);
-                const data = await saveUrlToSupabase(supabase, 'files', url, imageFile.name);
+                const data = await saveUrlToSupabase(supabase, 'images', url, user.id, true, 'ref');
                 setFiles([...files, ...data]);
             }
         }
@@ -62,15 +61,14 @@ export default function Create() {
     const handleGenerateImage = async () => {
         console.log("Generating image with input:", inputValue);
 
-        if (mode === 'Edit') {
+        if (mode === 'Edit (Inpaint/Outpaint)') {
             console.log("Generating image with Inpaint and Outpaint");
-            // Get the mask data URL from the canvas
             const maskDataUrl = canvasRef.current ? canvasRef.current.getCanvasDataUrl() : '';
             console.log("maskDataUrl", maskDataUrl);
             const maskUrl = await uploadImageToCloudinary(maskDataUrl);
             console.log("maskUrl", maskUrl);
             if (maskUrl) {
-                await saveUrlToSupabase(supabase, 'files_mask', maskUrl, `mask`);
+                await saveUrlToSupabase(supabase, 'images', maskUrl, user.id, false, 'mask');
 
                 const data = await generateImage(`${BASE_URL}/inpaintAndOutpaint`, {
                     file1: imageUrl,
@@ -90,7 +88,8 @@ export default function Create() {
                     init_image_mode: 'IMAGE_STRENGTH',
                     clip_guidance_preset: 'FAST_BLUE',
                     mask_source: 'MASK_IMAGE',
-                    model: selectedModel
+                    model_id: selectedModel,
+                    user_id: user.id
                 });
                 console.log("Generating image with Inpaint and Outpaint successful");
 
@@ -98,27 +97,18 @@ export default function Create() {
                     const generatedImageUrl = data[0].url;
                     setImageUrl(generatedImageUrl);
 
-                    // Fetch the image from the URL
-                    const response = await fetch(generatedImageUrl);
-                    const blob = await response.blob();
-
-                    // Upload the image blob to Cloudinary
-                    const uploadedUrl = await uploadImageToCloudinary(blob);
-
-                    // set image url
-                    setImageUrl(uploadedUrl);
-
-                    console.log("uploadedUrl", uploadedUrl);
-                    if (uploadedUrl) {
-                        console.log("Generated image uploaded to Cloudinary:", uploadedUrl);
-                        await saveUrlToSupabase(supabase, 'files', uploadedUrl, "");
-                    }
+                    console.log("Generated image URL:", generatedImageUrl);
+                    // if (generatedImageUrl) {
+                    //     await saveUrlToSupabase(supabase, 'files', generatedImageUrl, "");
+                    // }
                 }
             }
-        } else if (mode === 'Text + Image -> Image' && selectedImages.length > 0) {
+        } else if (mode === 'Text and Image to Image' && selectedImage) {
             console.log("Generating image with Text and Image");
             const data = await generateImage(`${BASE_URL}/textAndImageToImage`, {
-                image_url: selectedImages[0].link,
+                model_id: selectedModel,
+                user_id: user.id,
+                image_url: selectedImage.url,
                 prompt: inputValue,
                 sharpness: '5',
                 cn_type1: 'ImagePrompt',
@@ -131,8 +121,7 @@ export default function Create() {
                 cfg_scale: '7',
                 samples: '1',
                 steps: '50',
-                init_image_mode: 'IMAGE_STRENGTH',
-                model: selectedModel
+                init_image_mode: 'IMAGE_STRENGTH'
             });
 
             console.log("data", data);
@@ -140,27 +129,17 @@ export default function Create() {
                 const generatedImageUrl = data[0].url;
                 setImageUrl(generatedImageUrl);
 
-                // Fetch the image from the URL
-                const response = await fetch(generatedImageUrl);
-                const blob = await response.blob();
-
-                // Upload the image blob to Cloudinary
-                const uploadedUrl = await uploadImageToCloudinary(blob);
-
-                // set image url
-                setImageUrl(uploadedUrl);
-
-                console.log("uploadedUrl", uploadedUrl);
-                if (uploadedUrl) {
-                    console.log("Generated image uploaded to Cloudinary:", uploadedUrl);
-                    await saveUrlToSupabase(supabase, 'files', uploadedUrl, "");
-                }
+                console.log("Generated image URL:", generatedImageUrl);
+                // if (generatedImageUrl) {
+                //     await saveUrlToSupabase(supabase, 'files', generatedImageUrl, "");
+                // }
             }
         } else {
-            console.log("Generating image with Text");
+            console.log("Generating image with Text", inputValue, selectedModel, user.id);
             const data = await generateImage(`${BASE_URL}/textToImage`, {
-                model: selectedModel,
-                input: {prompt: inputValue}
+                model_id: selectedModel,
+                input: { prompt: inputValue },
+                user_id: user.id
             });
 
             console.log("data", data);
@@ -168,29 +147,17 @@ export default function Create() {
                 const generatedImageUrl = data[0].url;
                 setImageUrl(generatedImageUrl);
 
-                // Fetch the image from the URL
-                const response = await fetch(generatedImageUrl);
-                const blob = await response.blob();
-
-                // Upload the image blob to Cloudinary
-                const uploadedUrl = await uploadImageToCloudinary(blob);
-
-                // set image url
-                setImageUrl(uploadedUrl);
-
-                console.log("uploadedUrl", uploadedUrl);
-                if (uploadedUrl) {
-                    console.log("Generated image uploaded to Cloudinary:", uploadedUrl);
-                    await saveUrlToSupabase(supabase, 'files', uploadedUrl, "");
-                }
+                console.log("Generated image URL:", generatedImageUrl);
+                // if (generatedImageUrl) {
+                //     await saveUrlToSupabase(supabase, 'files', generatedImageUrl, "");
+                // }
             }
         }
     };
 
-
     return (
         <div className="min-h-screen flex flex-col">
-            <NavBar selectedTab={selectedTab} onSelectTab={setSelectedTab}/>
+            <NavBar selectedTab={selectedTab} onSelectTab={setSelectedTab} />
             <div className="flex flex-1">
                 <Toolbar
                     mode={selectedTab}
@@ -199,7 +166,7 @@ export default function Create() {
                     onUpload={handleUpload}
                     uploadedImageUrl={uploadedImageUrl}
                     onShowModal={() => setShowModal(true)}
-                    selectedImages={selectedImages}
+                    selectedImage={selectedImage}
                     brushSize={brushSize}
                     setBrushSize={setBrushSize}
                     tool={tool}
@@ -211,7 +178,7 @@ export default function Create() {
                             imageUrl={imageUrl}
                             brushSize={brushSize}
                             tool={tool}
-                            ref={canvasRef} // Use ref to get the canvas data URL
+                            ref={canvasRef}
                         />
                     </div>
                     <InputSection
@@ -232,10 +199,10 @@ export default function Create() {
                         <div className="grid grid-cols-2 gap-2">
                             {files.map((file) => (
                                 <div key={file.id} className="cursor-pointer" onClick={() => {
-                                    setSelectedImages([...selectedImages, file]);
+                                    setSelectedImage(file);
                                     setShowModal(false);
                                 }}>
-                                    <img src={file.link} alt={file.title} className="w-full rounded"/>
+                                    <img src={file.url} alt={file.id} className="w-full rounded" />
                                 </div>
                             ))}
                         </div>

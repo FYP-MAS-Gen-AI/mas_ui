@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface ToolbarProps {
@@ -7,7 +9,7 @@ interface ToolbarProps {
     onUpload: () => void;
     uploadedImageUrl: string;
     onShowModal: () => void;
-    selectedImages: any[];
+    selectedImage: any;
     brushSize: number;
     setBrushSize: React.Dispatch<React.SetStateAction<number>>;
     tool: string;
@@ -21,7 +23,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              onUpload,
                                              uploadedImageUrl,
                                              onShowModal,
-                                             selectedImages,
+                                             selectedImage,
                                              brushSize,
                                              setBrushSize,
                                              tool,
@@ -32,7 +34,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             {mode === 'Design' && (
                 <>
                     <div className="text-gray-700 font-bold mb-4">Upload Image</div>
-                    <input type="file" onChange={onFileChange} className="mb-2"/>
+                    <input type="file" onChange={onFileChange} className="mb-2" />
                     <button onClick={onUpload}
                             className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
                         Upload Image
@@ -46,11 +48,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
                             Select Reference Image
                         </button>
                         <div className="mt-2">
-                            {selectedImages.map((file) => (
-                                <div key={file.id} className="mb-2">
-                                    <img src={file.link} alt={file.title} className="w-full rounded"/>
+                            {selectedImage && (
+                                <div>
+                                    <img src={selectedImage.url} alt={selectedImage.title} className="w-full rounded" />
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </div>
                 </>

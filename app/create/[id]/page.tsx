@@ -17,7 +17,7 @@ export default async function Page() {
 
     return (
         <>
-            <Create/>
+            <Create user={user}/>
         </>
     );
 };
