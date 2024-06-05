@@ -14,6 +14,7 @@ interface ToolbarProps {
     setBrushSize: React.Dispatch<React.SetStateAction<number>>;
     tool: string;
     setTool: React.Dispatch<React.SetStateAction<string>>;
+    sessionID: string;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -28,6 +29,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              setBrushSize,
                                              tool,
                                              setTool,
+                                             sessionID,
                                          }) => {
     return (
         <div className="w-64 bg-gray-200 p-4">
@@ -59,8 +61,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
             )}
             {mode === 'Edit' && (
                 <div>
-                    <p>Edit Toolbar - Draw on the image to create a mask</p>
+                    {/*<p>Edit Toolbar - Draw on the image to create a mask</p>*/}
                     <div className="mt-4">
+                        <button onClick={() => setTool('none')}
+                                className={`py-2 px-4 rounded ${tool === 'none' ? 'bg-yellow-500 text-white' : 'bg-gray-300 text-black'}`}>
+                            Select
+                        </button>
                         <button onClick={() => setTool('brush')}
                                 className={`py-2 px-4 rounded mr-2 ${tool === 'brush' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
                             Brush
@@ -68,10 +74,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
                         <button onClick={() => setTool('eraser')}
                                 className={`py-2 px-4 rounded mr-2 ${tool === 'eraser' ? 'bg-red-500 text-white' : 'bg-gray-300 text-black'}`}>
                             Eraser
-                        </button>
-                        <button onClick={() => setTool('none')}
-                                className={`py-2 px-4 rounded ${tool === 'none' ? 'bg-yellow-500 text-white' : 'bg-gray-300 text-black'}`}>
-                            Select
                         </button>
                     </div>
                     <div className="mt-4">
@@ -89,7 +91,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             )}
             {mode === 'History' && (
                 <div>
-                    <p>History Toolbar - Show project history here</p>
+                    {/*<p>History Toolbar - Show project history here</p>*/}
                 </div>
             )}
         </div>

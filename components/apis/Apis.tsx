@@ -39,11 +39,11 @@ export const uploadImageToCloudinary = async (image: string | File, preset: stri
     }
 };
 
-export const saveUrlToSupabase = async (supabase, table: string, url: string, user, ref, type) => {
+export const saveUrlToSupabase = async (supabase, table: string, url: string, user, ref:boolean, type:string) => {
     console.log("user", user);
     const {data, error} = await supabase
         .from(table)
-        .insert([{url: url, user_id: user, ref:true, type:"ref"}])
+        .insert([{url: url, user_id: user, ref: ref, type: type}])
         .select();
 
     if (error) {
@@ -54,6 +54,7 @@ export const saveUrlToSupabase = async (supabase, table: string, url: string, us
         return data;
     }
 };
+
 
 export const generateImage = async (url: string, payload: object) => {
     try {
