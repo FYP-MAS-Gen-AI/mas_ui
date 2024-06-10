@@ -10,7 +10,7 @@ import { generateImage, saveUrlToSupabase, uploadImageToCloudinary } from '@/com
 import useSupabaseClient from "@/lib/supabase/client";
 import { usePathname } from 'next/navigation'
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "http://127.0.0.1:8003";
 
 export default function Create({user}) {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -25,6 +25,8 @@ export default function Create({user}) {
     const [selectedTab, setSelectedTab] = useState<string>('Design');
     const [brushSize, setBrushSize] = useState<number>(5);
     const [tool, setTool] = useState<string>('brush');
+
+    const [dimensions, setDimensions] = useState({ width: 1024, height: 1024, linkDimensions: true });
 
     const canvasRef = useRef<any>(null);
 
@@ -213,6 +215,10 @@ export default function Create({user}) {
                     tool={tool}
                     setTool={setTool}
                     sessionID={session_id}
+                    dimensions={dimensions}
+                    setDimensions={setDimensions}
+                    user={user}
+                    selectedModel={selectedModel}
                 />
                 <div className="flex-1 flex flex-col">
                     <div className="flex-1 flex justify-center items-center bg-gray-100 p-4">

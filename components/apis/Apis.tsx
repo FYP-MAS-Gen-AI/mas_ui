@@ -1,25 +1,3 @@
-// export const generateSimpleMask = async (imageUrl: string) => {
-//     // For demonstration, create a simple mask with a black rectangle in the center
-//     const img = new Image();
-//     img.crossOrigin = "Anonymous";
-//     img.src = imageUrl;
-//
-//     return new Promise<string>((resolve) => {
-//         img.onload = () => {
-//             const canvas = document.createElement('canvas');
-//             canvas.width = img.width;
-//             canvas.height = img.height;
-//             const ctx = canvas.getContext('2d');
-//             if (ctx) {
-//                 ctx.drawImage(img, 0, 0);
-//                 ctx.fillStyle = 'black';
-//                 ctx.fillRect(img.width / 4, img.height / 4, img.width / 2, img.height / 2);
-//                 resolve(canvas.toDataURL('image/png'));
-//             }
-//         };
-//     });
-// };
-
 export const uploadImageToCloudinary = async (image: string | File, preset: string = 'fr2fxnpz') => {
     const formData = new FormData();
     formData.append('file', image);
@@ -74,6 +52,35 @@ export const generateImage = async (url: string, payload: object) => {
         }
     } catch (error) {
         console.error('Error generating image:', error);
+        return null;
+    }
+};
+
+
+// New function to optimize the text prompt
+export const optimizeTextPrompt = async (existingPrompt: string, newUserInputPrompt: string) => {
+    try {
+        const payload = {
+            existing_prompt: existingPrompt,
+            new_user_input_prompt: newUserInputPrompt,
+        };
+
+        const response = await fetch('http://localhost:8001/optimize_text_prompt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Failed to optimize text prompt:', response.statusText);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error optimizing text prompt:', error);
         return null;
     }
 };
