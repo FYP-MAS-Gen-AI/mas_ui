@@ -1,7 +1,6 @@
 // components/chatbot/Chatbot.tsx
 
 import { useState } from 'react';
-// import axios from 'axios';
 
 interface ChatbotProps {
     imageUrl: string | null;
@@ -16,31 +15,47 @@ const Chatbot: React.FC<ChatbotProps> = ({ imageUrl, refImageUrl, userId, modelI
     const [message, setMessage] = useState('');
     const [chatHistory, setChatHistory] = useState<string[]>([]);
 
+    const prepareRequestBody = () => {
+        return JSON.stringify({
+            text: message,
+            image_url: imageUrl,
+            ref_image_url: refImageUrl,
+            user_id: userId,
+            model_id: modelId
+        });
+    };
+
     const handleSendMessage = async () => {
         if (message.trim() === '') return;
 
-        const chatbotInput = {
-            operation: 'Text -> Image',
-            text: message,
-            image_url: imageUrl,
-            ref_image_url: refImageUrl
-        };
+        const requestBody = prepareRequestBody();
+        console.log('Chatbot input:', requestBody);
 
         try {
-            // const response = await axios.post('/api/generateImage', {
-            //     ...chatbotInput,
-            //     user_id: userId,
-            //     model_id: modelId,
-            //     session_id: sessionId
-            // });
-            //
-            // const { imageUrl: generatedImageUrl } = response.data;
-            // if (generatedImageUrl) {
-            //     onImageGenerated(generatedImageUrl);
-            //     setChatHistory([...chatHistory, `You: ${message}`, `Bot: Image generated at ${generatedImageUrl}`]);
-            // } else {
-            //     setChatHistory([...chatHistory, `You: ${message}`, `Bot: Failed to generate image`]);
-            // }
+            console.log('Chatbot input:', JSON.parse(requestBody));
+            const response = await fetch('http://localhost:8001/generate_image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: requestBody,
+            });
+
+            console.log('Chatbot response:', response);
+
+            if (response.ok) {
+                const result = await response.json();
+                const generatedImageUrl = result.imageUrl;
+                if (generatedImageUrl) {
+                    onImageGenerated(generatedImageUrl);
+                    setChatHistory([...chatHistory, `You: ${message}`, `Bot: Image generated at ${generatedImageUrl}`]);
+                } else {
+                    setChatHistory([...chatHistory, `You: ${message}`, `Bot: Failed to generate image`]);
+                }
+            } else {
+                console.error('Failed to generate image:', response.statusText);
+                setChatHistory([...chatHistory, `You: ${message}`, `Bot: Failed to generate image`]);
+            }
         } catch (error) {
             console.error('Error generating image:', error);
             setChatHistory([...chatHistory, `You: ${message}`, `Bot: Error generating image`]);

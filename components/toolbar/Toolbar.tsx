@@ -6,7 +6,7 @@ import Chatbot from '@/components/chatbot/Chatbot'; // Import the Chatbot compon
 
 interface ToolbarProps {
     mode: string;
-    imageUrl: string;
+    imageUrl: any;
     onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onUpload: () => void;
     uploadedImageUrl: string;
@@ -21,6 +21,7 @@ interface ToolbarProps {
     setDimensions: React.Dispatch<React.SetStateAction<any>>;
     user: any;
     selectedModel: string;
+    setImageUrl: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -39,7 +40,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              dimensions,
                                              setDimensions,
                                              user,
-                                             selectedModel
+                                             selectedModel,
+                                             setImageUrl
                                          }) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -254,6 +256,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
     const handleImageGenerated = (url: string) => {
         setMessages([...messages, {type: 'Generated Image', gen_img_id: url}]);
+        setImageUrl(url);
     };
 
     return (
@@ -411,8 +414,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
             {mode === 'Chatbot' && ( // Add new Chatbot tab
                 <Chatbot
                     imageUrl={imageUrl}
-                    refImageUrl={uploadedImageUrl}
-                    userId={user.id}
+                    refImageUrl={selectedImage?.url}
+                    userId={user?.id}
                     modelId={selectedModel}
                     sessionId={sessionID}
                     onImageGenerated={handleImageGenerated}

@@ -10,7 +10,7 @@ import { generateImage, saveUrlToSupabase, uploadImageToCloudinary } from '@/com
 import useSupabaseClient from "@/lib/supabase/client";
 import { usePathname } from 'next/navigation'
 
-const BASE_URL = "http://127.0.0.1:8003";
+const BASE_URL = "http://127.0.0.1:8000";
 
 export default function Create({user}) {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -204,7 +204,7 @@ export default function Create({user}) {
             <div className="flex flex-1 mt-12">
                 <Toolbar
                     mode={selectedTab}
-                    imageUrl={uploadedImageUrl}
+                    imageUrl={imageUrl}
                     onFileChange={handleFileChange}
                     onUpload={handleUpload}
                     uploadedImageUrl={uploadedImageUrl}
@@ -219,6 +219,7 @@ export default function Create({user}) {
                     setDimensions={setDimensions}
                     user={user}
                     selectedModel={selectedModel}
+                    setImageUrl={setImageUrl}
                 />
                 <div className="flex-1 flex flex-col">
                     <div className="flex-1 flex justify-center items-center bg-gray-100 p-4">
