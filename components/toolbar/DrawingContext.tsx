@@ -1,12 +1,20 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 
 interface DrawingCanvasProps {
     imageUrl: string | null;
     brushSize: number;
     tool: string;
+    imageDimensions: { width: number; height: number; };
+    setImageDimensions: React.Dispatch<React.SetStateAction<{ width: number; height: number; }>>;
 }
 
-const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasProps, ref) => {
+const DrawingCanvas = forwardRef(({
+                                      imageUrl,
+                                      brushSize,
+                                      tool,
+                                      imageDimensions,
+                                      setImageDimensions
+                                  }: DrawingCanvasProps, ref) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const maskCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const imgRef = useRef<HTMLImageElement | null>(null);
@@ -39,6 +47,7 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
                 setToolAndBrush(ctx, maskCtx);
             }
         }
+        console.log(maskCanvas?.width, maskCanvas?.height)
     };
 
     const setToolAndBrush = (ctx: CanvasRenderingContext2D, maskCtx: CanvasRenderingContext2D) => {
@@ -67,7 +76,7 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (tool === 'none') return;
-        const { offsetX, offsetY } = e.nativeEvent;
+        const {offsetX, offsetY} = e.nativeEvent;
         if (ctxRef.current && maskCtxRef.current) {
             ctxRef.current.beginPath();
             maskCtxRef.current.beginPath();
@@ -87,7 +96,7 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
         if (!isDrawingRef.current || !ctxRef.current || !maskCtxRef.current) return;
-        const { offsetX, offsetY } = e.nativeEvent;
+        const {offsetX, offsetY} = e.nativeEvent;
         if (tool === 'brush') {
             ctxRef.current.lineTo(offsetX, offsetY);
             maskCtxRef.current.lineTo(offsetX, offsetY);
@@ -101,8 +110,8 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const { offsetX, offsetY } = e.nativeEvent;
-        setMousePosition({ x: offsetX, y: offsetY });
+        const {offsetX, offsetY} = e.nativeEvent;
+        setMousePosition({x: offsetX, y: offsetY});
     };
 
     useImperativeHandle(ref, () => ({
@@ -120,13 +129,13 @@ const DrawingCanvas = forwardRef(({ imageUrl, brushSize, tool }: DrawingCanvasPr
     return (
         <div className="relative">
             {imageUrl && <img ref={imgRef} src={imageUrl} alt="Selected"
-                              // className="w-full"
+                // className="w-full"
                               className="w-[500px]"
-                              crossOrigin="anonymous" onLoad={initializeCanvas} />}
+                              crossOrigin="anonymous" onLoad={initializeCanvas}/>}
             <canvas
                 ref={canvasRef}
                 className="absolute top-0 left-0 w-full h-full"
-                style={{ background: 'transparent' }}
+                style={{background: 'transparent'}}
                 onMouseDown={startDrawing}
                 onMouseUp={finishDrawing}
                 onMouseMove={(e) => {

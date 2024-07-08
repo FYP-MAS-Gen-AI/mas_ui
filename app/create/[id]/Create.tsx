@@ -28,6 +28,7 @@ export default function Create({user}: { user: any }) {
     const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
 
     const [dimensions, setDimensions] = useState({width: 1024, height: 1024, linkDimensions: true});
+    const [imageDimensions, setImageDimensions] = useState({width: 1024, height: 1024});
 
     const canvasRef = useRef<any>(null);
 
@@ -243,6 +244,8 @@ export default function Create({user}: { user: any }) {
                             imageUrl={imageUrl}
                             brushSize={brushSize}
                             tool={tool}
+                            imageDimensions={imageDimensions}
+                            setImageDimensions={setImageDimensions}
                             ref={canvasRef}
                         />
                     </div>
