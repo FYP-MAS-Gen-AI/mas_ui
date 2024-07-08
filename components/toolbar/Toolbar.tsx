@@ -14,6 +14,7 @@ interface Dimensions {
 
 interface ToolbarProps {
     mode: string;
+    selectedTab: string;
     imageUrl: any;
     onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onUpload: () => void;
@@ -34,6 +35,7 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({
                                              mode,
+                                                selectedTab,
                                              imageUrl,
                                              onFileChange,
                                              onUpload,
@@ -121,11 +123,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
     };
 
     return (
-        <div className={`${mode === 'History' ? 'w-4/5' : 'w-64'} bg-gray-200 p-4`}>
-            {mode === 'Design' && (
+        <div className={`${selectedTab === 'History' ? 'w-4/5' : 'w-64'} bg-gray-200 p-4`}>
+            {selectedTab === 'Design' && (
                 <Design
+                    mode={mode}
+                    selectedModel={selectedModel}
                     onFileChange={onFileChange}
                     onUpload={onUpload}
+                    imageUrl={imageUrl}
                     uploadedImageUrl={uploadedImageUrl}
                     onShowModal={onShowModal}
                     selectedImage={selectedImage}
@@ -135,7 +140,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     toggleLinkDimensions={toggleLinkDimensions}
                 />
             )}
-            {mode === 'Edit' && (
+            {selectedTab === 'Edit' && (
                 <Edit
                     brushSize={brushSize}
                     setBrushSize={setBrushSize}
@@ -143,7 +148,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     setTool={setTool}
                 />
             )}
-            {mode === 'History' && (
+            {selectedTab === 'History' && (
                 <History
                     messages={messages}
                     sessionID={sessionID}
@@ -151,7 +156,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     supabase={supabase}
                 />
             )}
-            {mode === 'Chatbot' && (
+            {selectedTab === 'Chatbot' && (
                 <Chat
                     imageUrl={imageUrl}
                     selectedImage={selectedImage}

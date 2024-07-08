@@ -78,6 +78,17 @@ const InputSection: React.FC<InputSectionProps> = ({
         onInputChange({ target: { value: optimizedPrompt } } as React.ChangeEvent<HTMLInputElement>);
     };
 
+    const filteredModels = models.filter(model => {
+        if (mode === 'Text to Image') {
+            return true;
+        } else if (mode === 'Text and Image to Image') {
+            return model.code_name === 'sd-getai' || model.code_name === 'sd1-sdai';
+        } else if (mode === 'Edit (Inpaint/Outpaint)') {
+            return model.code_name === 'sd-getai' || model.code_name === 'sd1-sdai';
+        }
+        return false;
+    });
+
     return (
         <div className="bg-white p-4 border-t border-gray-200">
             <select
@@ -94,7 +105,7 @@ const InputSection: React.FC<InputSectionProps> = ({
                 onChange={onModelChange}
                 className="border rounded px-4 py-2 w-full mb-2"
             >
-                {models.map(model => (
+                {filteredModels.map(model => (
                     <option key={model.code_name} value={model.code_name}>
                         {model.show_name}
                     </option>

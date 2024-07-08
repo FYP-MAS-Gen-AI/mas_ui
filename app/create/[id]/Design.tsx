@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface Dimensions {
     width: number;
@@ -7,8 +7,11 @@ interface Dimensions {
 }
 
 interface DesignProps {
+    mode: string;
+    selectedModel: string;
     onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onUpload: () => void;
+    imageUrl: string;
     uploadedImageUrl: string;
     onShowModal: () => void;
     selectedImage: any;
@@ -18,22 +21,68 @@ interface DesignProps {
     toggleLinkDimensions: () => void;
 }
 
+const ImageInformation: React.FC = () => {
+    return (
+        <div className="mt-4">
+            <p className="text-gray-700">Image Information Component</p>
+            {/* Add relevant image information here */}
+        </div>
+    );
+};
+
+const UploadImageSection: React.FC<{
+    onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onUpload: () => void;
+    uploadedImageUrl: string;
+}> = ({ onFileChange, onUpload, uploadedImageUrl }) => {
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadMessage, setUploadMessage] = useState('');
+
+    const handleUpload = async () => {
+        setIsUploading(true);
+        setUploadMessage('');
+        await onUpload();
+        setIsUploading(false);
+        setUploadMessage('Image uploaded successfully.');
+        console.log('Uploaded image URL:', uploadedImageUrl);
+    };
+
+    return (
+        <>
+            <div className="text-gray-700 font-bold mb-4">Upload Image</div>
+            <input type="file" onChange={onFileChange} className="mb-2" />
+            <button
+                onClick={handleUpload}
+                className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+                disabled={isUploading}
+            >
+                {isUploading ? 'Uploading...' : 'Upload Image'}
+            </button>
+            {uploadMessage && <p className="mt-2 text-sm text-green-600">{uploadMessage}</p>}
+            {/*{uploadedImageUrl && <p className="mt-2 text-sm">Image URL: {uploadedImageUrl}</p>}*/}
+        </>
+    );
+};
+
 const Design: React.FC<DesignProps> = ({
+                                           mode,
+                                           selectedModel,
                                            onFileChange,
                                            onUpload,
+                                           imageUrl,
                                            uploadedImageUrl,
                                            onShowModal,
                                            selectedImage,
                                            dimensions,
                                            handleWidthChange,
                                            handleHeightChange,
-                                           toggleLinkDimensions
+                                           toggleLinkDimensions,
                                        }) => {
     const downloadImage = (imageUrl: string) => {
         console.log('Downloading image:', imageUrl);
         fetch(imageUrl)
-            .then(response => response.blob())
-            .then(blob => {
+            .then((response) => response.blob())
+            .then((blob) => {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
@@ -43,36 +92,56 @@ const Design: React.FC<DesignProps> = ({
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
             })
-            .catch(error => console.error('Error downloading image:', error));
+            .catch((error) => console.error('Error downloading image:', error));
     };
 
     return (
         <>
-            <div className="text-gray-700 font-bold mb-4">Upload Image</div>
-            <input type="file" onChange={onFileChange} className="mb-2"/>
-            <button onClick={onUpload}
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
-                Upload Image
-            </button>
-            {uploadedImageUrl && <p className="mt-2 text-sm">Image URL: {uploadedImageUrl}</p>}
-            <div className="mt-4">
-                <button
-                    onClick={onShowModal}
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
-                >
-                    Select Reference Image
-                </button>
-                <div className="mt-2">
-                    {selectedImage && (
-                        <div>
-                            <img src={selectedImage.url} alt={selectedImage.title} className="w-full rounded"/>
-                            <button onClick={() => downloadImage(selectedImage.url)}
-                                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Download
-                            </button>
+            <div className="text-gray-700 font-bold mb-4">Image Information</div>
+            <ImageInformation />
+            {mode === 'Text and Image to Image' && (
+                <>
+                    <UploadImageSection
+                        onFileChange={onFileChange}
+                        onUpload={onUpload}
+                        uploadedImageUrl={uploadedImageUrl}
+                    />
+                    <div className="mt-4">
+                        <button
+                            onClick={onShowModal}
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+                        >
+                            Select Reference Image
+                        </button>
+                        <div className="mt-2">
+                            {selectedImage && (
+                                <div>
+                                    <img src={selectedImage.url} alt={selectedImage.title} className="w-full rounded" />
+                                    <button
+                                        onClick={() => downloadImage(selectedImage.url)}
+                                        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+                                    >
+                                        Download
+                                    </button>
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
-            </div>
+                    </div>
+                </>
+            )}
+            {mode === 'Edit (Inpaint/Outpaint)' && (
+                <UploadImageSection
+                    onFileChange={onFileChange}
+                    onUpload={onUpload}
+                    uploadedImageUrl={uploadedImageUrl}
+                />
+            )}
+            {mode === 'Text to Image' && (
+                <>
+                    <ImageInformation />
+                </>
+            )}
+            <div className="text-gray-700 font-bold mb-4 mt-5">Download</div>
             <div className="mt-4 flex items-center">
                 <label className="text-gray-700">w</label>
                 <input
@@ -96,10 +165,9 @@ const Design: React.FC<DesignProps> = ({
                     className="w-16 ml-2 p-2 border rounded"
                 />
             </div>
-        {/*    Download button*/}
             <div className="mt-4">
                 <button
-                    onClick={() => downloadImage(uploadedImageUrl)}
+                    onClick={() => downloadImage(imageUrl)}
                     className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
                 >
                     Download Image
