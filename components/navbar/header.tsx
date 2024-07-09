@@ -1,24 +1,26 @@
 import Link from 'next/link';
 import getUserSession from '@/lib/getUserSession';
-import {ModeToggle} from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/mode-toggle";
 import ProfileDropdown from '@/components/navbar/ProfileDropdown';
+import React from "react";
 
 const Header = async () => {
-    const {data} = await getUserSession();
+    const { data } = await getUserSession();
 
     return (
-        <header className='bg-white dark:bg-gray-800 shadow-md'>
+        <header className='bg-[#212121] dark:bg-gray-800 shadow-md'>
             <nav className='container mx-auto flex justify-between items-center h-20 px-4'>
                 <div>
-                    <Link href='/public' className='text-gray-800 dark:text-white text-2xl font-semibold'>
-                        MAS Fashion
+                    <Link href='' className='text-[#77797C] dark:text-[#77797C] text-2xl font-semibold flex items-center'>
+                        <img src="./mas_logo.png" alt="mas logo" className="w-8 h-8 mr-3" />
+                        Artwork Generator by MAS
                     </Link>
                 </div>
-                <div className='flex-1 flex justify-center'>
+                <div className='flex items-center space-x-4'>
                     <ul className='flex items-center space-x-4'>
                         <li>
                             <Link href='/public'
-                                  className='text-gray-800 dark:text-white hover:text-green-500 dark:hover:text-green-500'>
+                                  className='text-white dark:text-white hover:text-gray-500 dark:hover:text-gray-500'>
                                 Home
                             </Link>
                         </li>
@@ -26,34 +28,34 @@ const Header = async () => {
                             <>
                                 <li>
                                     <Link href='/register'
-                                          className='text-gray-800 dark:text-white hover:text-green-500 dark:hover:text-green-500'>
+                                          className='text-white dark:text-white hover:text-gray-500 dark:hover:text-gray-500'>
                                         Register
                                     </Link>
                                 </li>
                                 <li>
                                     <Link href='/login'
-                                          className='text-gray-800 dark:text-white hover:text-green-500 dark:hover:text-green-500'>
+                                          className='text-white dark:text-white hover:text-gray-500 dark:hover:text-gray-500'>
                                         Login
                                     </Link>
                                 </li>
                             </>
                         )}
                         {data.session && (
-                            <>
+                            <li>
                                 <Link href='/create'
-                                      className='text-gray-800 dark:text-white hover:text-green-500 dark:hover:text-green-500'>
+                                      className='text-white dark:text-white hover:text-gray-500 dark:hover:text-gray-500'>
                                     Create
                                 </Link>
-                            </>
+                            </li>
                         )}
                     </ul>
                 </div>
-                <div className='flex items-center space-x-4'>
-                    <ModeToggle/>
-                    {data.session && (
-                        <ProfileDropdown session={data.session}/>
-                    )}
-                </div>
+                {/*<div className='flex items-center space-x-4'>*/}
+                {/*    <ModeToggle/>*/}
+                {/*    {data.session && (*/}
+                {/*        <ProfileDropdown session={data.session}/>*/}
+                {/*    )}*/}
+                {/*</div>*/}
             </nav>
         </header>
     );

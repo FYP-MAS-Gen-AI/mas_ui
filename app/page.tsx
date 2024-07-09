@@ -1,30 +1,31 @@
 import Header from '@/components/navbar/header';
 import Link from "next/link";
+import React from "react";
 
 export default function Home() {
     return (
-        <div className="bg-white dark:bg-gray-900 min-h-screen">
-            <Header/>
-            <section className='bg-green-600 dark:bg-blue-700 min-h-screen pt-20'>
+        <div className="bg-[#2F2F2F] dark:bg-gray-900 min-h-screen">
+            <Header />
+            <section className='bg-[#2F2F2F] dark:bg-blue-700 min-h-screen mb-12'>
                 <div
-                    className='max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-md h-[20rem] flex justify-center items-center shadow-lg'>
+                    className='mx-auto bg-white dark:bg-gray-800 rounded-md h-[30rem] flex justify-center items-center shadow-lg'>
                     <div className='text-center px-4'>
-                        <h1 className='text-5xl font-bold mb-4 text-black dark:text-white'>
-                            Welcome to MAS Fashion
+                        <div className='flex justify-center mb-4'>
+                            <img src="./twinery-logo-default.png" alt="mas logo" className="w-1/5 "/>
+                        </div>
+                        <h1 className='text-5xl font-bold mb-4 mt-5 text-[#2F2F2F] dark:text-white'>
+                            Welcome to Artwork Generator by MAS
                         </h1>
-                        {/*<p className='text-xl font-light text-black dark:text-white'>*/}
-                        {/*    Implement Authentication with Supabase in Next.js 14*/}
-                        {/*</p>*/}
                         <Link href='/create'>
                             <button
-                                className='mt-8 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'>
+                                className='mt-10 bg-[#FF0001] hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>
                                 Create Design
                             </button>
                         </Link>
+
                     </div>
                 </div>
             </section>
-
         </div>
     );
 }

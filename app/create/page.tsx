@@ -60,6 +60,27 @@ export default function ShowCreate() {
         }
     };
 
+    const handleDeleteSession = async (id) => {
+        console.log("Deleting", id)
+
+        const { error } = await supabase
+            .from('session')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error(`Error deleting session ${id}:`, error);
+            return;
+        }
+        else {
+            console.log("Deleted")
+        }
+
+        setSessionList((prev) =>
+            prev.filter((session) => session.id !== id)
+        );
+    };
+
     const handleRowClick = (id) => {
         router.push(`/create/${id}`);
     };
@@ -89,7 +110,7 @@ export default function ShowCreate() {
                                 <tbody>
                                 {sessionList.map((session) => (
                                     <tr key={session.id} onClick={() => handleRowClick(session.id)} className="cursor-pointer hover:bg-gray-100 transition-colors">
-                                        <td className="py-2 px-4 border-b">{session.id}</td>
+                                        <td className="py-2 px-4 border-b">{session.created_at}</td>
                                         <td className="py-2 px-4 border-b">
                                             <input
                                                 type="text"
@@ -108,11 +129,14 @@ export default function ShowCreate() {
                                                 className="w-full px-2 py-1 border rounded"
                                             />
                                         </td>
-                                        <td className="py-2 px-4 border-b">
-                                            <button onClick={() => router.push(`/create/${session.id}`)}
-                                                    className="text-blue-500 hover:text-blue-600 transition-colors"
-                                                    onClick={(e) => e.stopPropagation()}>
+                                        <td className="py-2 px-4 border-b flex space-x-2">
+                                            <button onClick={(e) => {e.stopPropagation(); router.push(`/create/${session.id}`);}}
+                                                    className="text-blue-500 hover:text-blue-600 transition-colors">
                                                 View
+                                            </button>
+                                            <button onClick={(e) => {e.stopPropagation(); handleDeleteSession(session.id);}}
+                                                    className="text-red-500 hover:text-red-600 transition-colors">
+                                                Delete
                                             </button>
                                         </td>
                                     </tr>
