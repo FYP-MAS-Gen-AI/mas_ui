@@ -24,7 +24,7 @@ export default function Create({ user }: { user: any }) {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [mode, setMode] = useState<string>('Text to Image'); // Text and Image to Image // Edit (Inpaint/Outpaint)
     const [selectedTab, setSelectedTab] = useState<string>('Design');
-    const [brushSize, setBrushSize] = useState<number>(5);
+    const [brushSize, setBrushSize] = useState<number>(30);
     const [tool, setTool] = useState<string>('brush');
     const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
 

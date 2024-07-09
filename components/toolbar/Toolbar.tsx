@@ -122,8 +122,18 @@ const Toolbar: React.FC<ToolbarProps> = ({
         setImageUrl(url);
     };
 
+    const getWidthClass = () => {
+        if (selectedTab === 'History') {
+            return 'w-4/5';
+        }
+        if (selectedTab === 'Chatbot') {
+            return 'w-1/3';
+        }
+        return 'w-64';
+    };
+
     return (
-        <div className={`${selectedTab === 'History' ? 'w-4/5' : 'w-64'} bg-gray-200 p-4`}>
+        <div className={`${getWidthClass()} bg-gray-200 p-4`}>
             {selectedTab === 'Design' && (
                 <Design
                     mode={mode}

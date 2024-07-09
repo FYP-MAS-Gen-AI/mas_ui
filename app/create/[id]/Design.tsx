@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ImageInformation from "@/app/create/[id]/ImageInformation";
 
 interface Dimensions {
     width: number;
@@ -20,15 +21,6 @@ interface DesignProps {
     handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     toggleLinkDimensions: () => void;
 }
-
-const ImageInformation: React.FC = () => {
-    return (
-        <div className="mt-4">
-            <p className="text-gray-700">Image Information Component</p>
-            {/* Add relevant image information here */}
-        </div>
-    );
-};
 
 const UploadImageSection: React.FC<{
     onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -59,7 +51,6 @@ const UploadImageSection: React.FC<{
                 {isUploading ? 'Uploading...' : 'Upload Image'}
             </button>
             {uploadMessage && <p className="mt-2 text-sm text-green-600">{uploadMessage}</p>}
-            {/*{uploadedImageUrl && <p className="mt-2 text-sm">Image URL: {uploadedImageUrl}</p>}*/}
         </>
     );
 };
@@ -97,8 +88,8 @@ const Design: React.FC<DesignProps> = ({
 
     return (
         <>
-            <div className="text-gray-700 font-bold mb-4">Image Information</div>
-            <ImageInformation />
+            <div className="text-gray-700 font-bold mb-4 mt-4">Image Information</div>
+            <ImageInformation imageUrl={imageUrl} dimensions={dimensions} />
             {mode === 'Text and Image to Image' && (
                 <>
                     <UploadImageSection
@@ -135,11 +126,6 @@ const Design: React.FC<DesignProps> = ({
                     onUpload={onUpload}
                     uploadedImageUrl={uploadedImageUrl}
                 />
-            )}
-            {mode === 'Text to Image' && (
-                <>
-                    <ImageInformation />
-                </>
             )}
             <div className="text-gray-700 font-bold mb-4 mt-5">Download</div>
             <div className="mt-4 flex items-center">

@@ -13,7 +13,7 @@ const Header = async () => {
                 <div>
                     <Link href='' className='text-[#77797C] dark:text-[#77797C] text-2xl font-semibold flex items-center'>
                         <img src="./mas_logo.png" alt="mas logo" className="w-8 h-8 mr-3" />
-                        Artwork Generator by MAS
+                        Artwork Generator
                     </Link>
                 </div>
                 <div className='flex items-center space-x-4'>

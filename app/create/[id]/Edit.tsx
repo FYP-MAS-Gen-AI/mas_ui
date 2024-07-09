@@ -16,7 +16,7 @@ const Edit: React.FC<EditProps> = ({ brushSize, setBrushSize, tool, setTool }) =
                     Select
                 </button>
                 <button onClick={() => setTool('brush')}
-                        className={`py-2 px-4 rounded mr-2 ${tool === 'brush' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
+                        className={`py-2 px-4 rounded mr-2 ml-2 mb-2 ${tool === 'brush' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
                     Brush
                 </button>
                 <button onClick={() => setTool('eraser')}
@@ -29,7 +29,8 @@ const Edit: React.FC<EditProps> = ({ brushSize, setBrushSize, tool, setTool }) =
                 <input
                     type="range"
                     min="1"
-                    max="50"
+                    max="100"
+                    defaultValue="40"
                     value={brushSize}
                     onChange={(e) => setBrushSize(Number(e.target.value))}
                     className="w-full"
