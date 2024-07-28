@@ -31,6 +31,11 @@ export default function Create({ user }: { user: any }) {
     const [dimensions, setDimensions] = useState({ width: 1024, height: 1024, linkDimensions: true });
     const [imageDimensions, setImageDimensions] = useState({ width: 1024, height: 1024 });
 
+    const [aspectRatio, setAspectRatio] = useState<string>("1:1");
+    const [imageWidth, setImageWidth] = useState<number>(1024);
+    const [imageHeight, setImageHeight] = useState<number>(1024);
+    const [style, setStyle] = useState<string>('');
+
     const canvasRef = useRef<any>(null);
 
     const supabase = useSupabaseClient();
@@ -180,7 +185,10 @@ export default function Create({ user }: { user: any }) {
                 const data = await generateImage(`${BASE_URL}/textToImage`, {
                     model_id: selectedModel,
                     input: { prompt: inputValue },
-                    user_id: user.id
+                    user_id: user.id,
+                    // aspect_ratio: aspectRatio,
+                    // height: imageHeight,
+                    // width: imageWidth,
                 });
 
                 console.log("data", data);
@@ -251,6 +259,14 @@ export default function Create({ user }: { user: any }) {
                     user={user}
                     selectedModel={selectedModel}
                     setImageUrl={setImageUrl}
+                    aspectRatio={aspectRatio}
+                    setAspectRatio={setAspectRatio}
+                    imageWidth={imageWidth}
+                    setImageWidth={setImageWidth}
+                    imageHeight={imageHeight}
+                    setImageHeight={setImageHeight}
+                    stylePreset={style}
+                    setStylePreset={setStyle}
                 />
                 <div className="flex-1 flex flex-col">
                     <div className="flex-1 flex justify-center items-center bg-gray-100 p-4">

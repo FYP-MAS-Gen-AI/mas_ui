@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageInformation from "@/app/create/[id]/ImageInformation";
 
 interface Dimensions {
@@ -20,6 +20,14 @@ interface DesignProps {
     handleWidthChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     toggleLinkDimensions: () => void;
+    aspectRatio: string;
+    setAspectRatio: React.Dispatch<React.SetStateAction<string>>;
+    imageWidth: number;
+    setImageWidth: React.Dispatch<React.SetStateAction<number>>;
+    imageHeight: number;
+    setImageHeight: React.Dispatch<React.SetStateAction<number>>;
+    stylePreset: string;
+    setStylePreset: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const UploadImageSection: React.FC<{
@@ -55,8 +63,28 @@ const UploadImageSection: React.FC<{
     );
 };
 
+const modelOptions = {
+    "stability-ultra": {
+        "aspect_ratios": ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"]
+    },
+    "stability-core": {
+        "aspect_ratios": ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],
+        "style_preset": ["none", "3d-model", "analog-film", "anime", "cinematic", "comic-book", "digital-art", "enhance",
+            "fantasy-art", "isometric", "line-art", "low-poly", "modeling-compound", "neon-punk",
+            "origami", "photographic", "pixel-art", "tile-texture"]
+    },
+    "stability-diffusion": {
+        "aspect_ratios": ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"]
+    },
+    "sd1-sdai": {
+        "min_dimension": 320,
+        "max_dimension": 1536,
+        "model": "stable-diffusion-xl-1024-v1-0"
+    }
+};
+
 const Design: React.FC<DesignProps> = ({
-                                           mode,
+                                           mode = "Text to Image",
                                            selectedModel,
                                            onFileChange,
                                            onUpload,
@@ -68,6 +96,14 @@ const Design: React.FC<DesignProps> = ({
                                            handleWidthChange,
                                            handleHeightChange,
                                            toggleLinkDimensions,
+                                           aspectRatio,
+                                           setAspectRatio,
+                                           imageWidth = 1024,
+                                           setImageWidth,
+                                           imageHeight = 1024,
+                                           setImageHeight,
+                                           stylePreset = "none",
+                                           setStylePreset
                                        }) => {
     const downloadImage = (imageUrl: string) => {
         console.log('Downloading image:', imageUrl);
@@ -86,54 +122,84 @@ const Design: React.FC<DesignProps> = ({
             .catch((error) => console.error('Error downloading image:', error));
     };
 
+    const options = modelOptions[selectedModel];
+
+    useEffect(() => {
+        if (options) {
+            if (options.aspect_ratios && !options.aspect_ratios.includes(aspectRatio)) {
+                setAspectRatio("1:1");
+            }
+            if (options.style_preset && !options.style_preset.includes(stylePreset)) {
+                setStylePreset("none");
+            }
+        }
+    }, [selectedModel]);
+
     return (
         <>
+            <div className="text-gray-700 font-bold mb-4 mt-4">Selected Model and Mode</div>
+            <div className="mb-4">
+                <p><span className="font-bold">Selected Model:</span> {selectedModel}</p>
+                <p><span className="font-bold">Mode:</span> {mode}</p>
+            </div>
+
+            {mode === "Text to Image" && options && (options.aspect_ratios || options.style_preset) && (
+                <div className="mb-4">
+                    <div className="text-gray-700 font-bold mb-4 mt-4">Model Options</div>
+                    {options.aspect_ratios && (
+                        <div>
+                            <label className="font-bold">Aspect Ratios:</label>
+                            <select
+                                value={aspectRatio}
+                                onChange={(e) => setAspectRatio(e.target.value)}
+                                className="ml-2 p-2 border rounded"
+                            >
+                                {options.aspect_ratios.map((ratio) => (
+                                    <option key={ratio} value={ratio}>
+                                        {ratio}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                    {options.style_preset && (
+                        <div>
+                            <label className="font-bold">Style Presets:</label>
+                            <select
+                                value={stylePreset}
+                                onChange={(e) => setStylePreset(e.target.value)}
+                                className="ml-2 p-2 border rounded"
+                            >
+                                {options.style_preset.map((preset) => (
+                                    <option key={preset} value={preset}>
+                                        {preset}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+                    {options.min_dimension && (
+                        <p><span className="font-bold">Min Dimension:</span> {options.min_dimension}</p>
+                    )}
+                    {options.max_dimension && (
+                        <p><span className="font-bold">Max Dimension:</span> {options.max_dimension}</p>
+                    )}
+                </div>
+            )}
             <div className="text-gray-700 font-bold mb-4 mt-4">Image Information</div>
             <ImageInformation imageUrl={imageUrl} dimensions={dimensions} />
-            {mode === 'Text and Image to Image' && (
-                <>
-                    <UploadImageSection
-                        onFileChange={onFileChange}
-                        onUpload={onUpload}
-                        uploadedImageUrl={uploadedImageUrl}
-                    />
-                    <div className="mt-4">
-                        <button
-                            onClick={onShowModal}
-                            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
-                        >
-                            Select Reference Image
-                        </button>
-                        <div className="mt-2">
-                            {selectedImage && (
-                                <div>
-                                    <img src={selectedImage.url} alt={selectedImage.title} className="w-full rounded" />
-                                    <button
-                                        onClick={() => downloadImage(selectedImage.url)}
-                                        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-                                    >
-                                        Download
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </>
-            )}
-            {mode === 'Edit (Inpaint/Outpaint)' && (
-                <UploadImageSection
-                    onFileChange={onFileChange}
-                    onUpload={onUpload}
-                    uploadedImageUrl={uploadedImageUrl}
-                />
-            )}
+            <UploadImageSection
+                onFileChange={onFileChange}
+                onUpload={onUpload}
+                uploadedImageUrl={uploadedImageUrl}
+            />
             <div className="text-gray-700 font-bold mb-4 mt-5">Download</div>
             <div className="mt-4 flex items-center">
                 <label className="text-gray-700">w</label>
                 <input
                     type="number"
-                    value={dimensions.width}
-                    onChange={handleWidthChange}
+                    value={imageWidth}
+                    onChange={(e) => setImageWidth(Math.max(320, Math.min(1536, Number(e.target.value))))}
                     className="w-16 mx-2 p-2 border rounded"
                 />
                 <span>🔗</span>
@@ -146,8 +212,8 @@ const Design: React.FC<DesignProps> = ({
                 <label className="text-gray-700">h</label>
                 <input
                     type="number"
-                    value={dimensions.height}
-                    onChange={handleHeightChange}
+                    value={imageHeight}
+                    onChange={(e) => setImageHeight(Math.max(320, Math.min(1536, Number(e.target.value))))}
                     className="w-16 ml-2 p-2 border rounded"
                 />
             </div>

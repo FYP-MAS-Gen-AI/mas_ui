@@ -31,6 +31,14 @@ interface ToolbarProps {
     user: any;
     selectedModel: string;
     setImageUrl: React.Dispatch<React.SetStateAction<any>>;
+    aspectRatio: string;
+    setAspectRatio: React.Dispatch<React.SetStateAction<string>>;
+    imageWidth: number;
+    setImageWidth: React.Dispatch<React.SetStateAction<number>>;
+    imageHeight: number;
+    setImageHeight: React.Dispatch<React.SetStateAction<number>>;
+    stylePreset: string;
+    setStylePreset: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
@@ -51,7 +59,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              setDimensions,
                                              user,
                                              selectedModel,
-                                             setImageUrl
+                                             setImageUrl,
+                                             aspectRatio,
+                                             setAspectRatio,
+                                             imageWidth,
+                                             setImageWidth,
+                                             imageHeight,
+                                             setImageHeight,
+                                                stylePreset,
+                                                setStylePreset
                                          }) => {
     const [messages, setMessages] = useState<any[]>([]);
     const supabase = useSupabaseClient();
@@ -148,6 +164,14 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     handleWidthChange={handleWidthChange}
                     handleHeightChange={handleHeightChange}
                     toggleLinkDimensions={toggleLinkDimensions}
+                    aspectRatio={aspectRatio}
+                    setAspectRatio={setAspectRatio}
+                    imageWidth={imageWidth}
+                    setImageWidth={setImageWidth}
+                    imageHeight={imageHeight}
+                    setImageHeight={setImageHeight}
+                    stylePreset={stylePreset}
+                    setStylePreset={setStylePreset}
                 />
             )}
             {selectedTab === 'Edit' && (

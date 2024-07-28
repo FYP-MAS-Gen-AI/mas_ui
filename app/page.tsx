@@ -4,16 +4,16 @@ import React from "react";
 
 export default function Home() {
     return (
-        <div className="bg-[#2F2F2F] dark:bg-gray-900 min-h-screen">
+        <div className="bg-[#2F2F2F] min-h-screen">
             <Header />
-            <section className='bg-[#2F2F2F] dark:bg-blue-700 min-h-screen mb-12'>
+            <section className='bg-[#2F2F2F] min-h-screen mb-12'>
                 <div
-                    className='mx-auto bg-white dark:bg-gray-800 rounded-md h-[30rem] flex justify-center items-center shadow-lg'>
+                    className='mx-auto bg-white rounded-md h-[30rem] flex justify-center items-center shadow-lg'>
                     <div className='text-center px-4'>
                         <div className='flex justify-center mb-4'>
                             <img src="./twinery-logo-default.png" alt="mas logo" className="w-1/5 "/>
                         </div>
-                        <h1 className='text-5xl font-bold mb-4 mt-5 text-[#2F2F2F] dark:text-white'>
+                        <h1 className='text-5xl font-bold mb-4 mt-5 text-[#2F2F2F] '>
                             Welcome to Artwork Generator by MAS
                         </h1>
                         <Link href='/create'>
