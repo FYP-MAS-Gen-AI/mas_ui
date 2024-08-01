@@ -22,10 +22,6 @@ interface DesignProps {
     toggleLinkDimensions: () => void;
     aspectRatio: string;
     setAspectRatio: React.Dispatch<React.SetStateAction<string>>;
-    imageWidth: number;
-    setImageWidth: React.Dispatch<React.SetStateAction<number>>;
-    imageHeight: number;
-    setImageHeight: React.Dispatch<React.SetStateAction<number>>;
     stylePreset: string;
     setStylePreset: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -49,7 +45,7 @@ const UploadImageSection: React.FC<{
 
     return (
         <>
-            <div className="text-gray-700 font-bold mb-4">Upload Image</div>
+            <div className="text-gray-700 font-bold mb-4 mt-6">Upload Image</div>
             <input type="file" onChange={onFileChange} className="mb-2" />
             <button
                 onClick={handleUpload}
@@ -98,28 +94,31 @@ const Design: React.FC<DesignProps> = ({
                                            toggleLinkDimensions,
                                            aspectRatio,
                                            setAspectRatio,
-                                           imageWidth = 1024,
-                                           setImageWidth,
-                                           imageHeight = 1024,
-                                           setImageHeight,
                                            stylePreset = "none",
                                            setStylePreset
                                        }) => {
     const downloadImage = (imageUrl: string) => {
-        console.log('Downloading image:', imageUrl);
-        fetch(imageUrl)
-            .then((response) => response.blob())
-            .then((blob) => {
-                const url = window.URL.createObjectURL(blob);
+        const img = new Image();
+        img.src = imageUrl;
+        img.crossOrigin = 'Anonymous'; // This is important if the image is hosted on a different domain
+
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = dimensions.width;
+            canvas.height = dimensions.height;
+            const ctx = canvas.getContext('2d');
+
+            if (ctx) {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const url = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = 'image.png'; // You can customize the filename here
+                link.download = 'image.png'; // Customize the filename here
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);
-            })
-            .catch((error) => console.error('Error downloading image:', error));
+            }
+        };
     };
 
     const options = modelOptions[selectedModel];
@@ -137,11 +136,17 @@ const Design: React.FC<DesignProps> = ({
 
     return (
         <>
-            <div className="text-gray-700 font-bold mb-4 mt-4">Selected Model and Mode</div>
-            <div className="mb-4">
-                <p><span className="font-bold">Selected Model:</span> {selectedModel}</p>
-                <p><span className="font-bold">Mode:</span> {mode}</p>
-            </div>
+            {/*<div className="text-gray-700 font-bold mb-4 mt-4">Selected Model and Mode</div>*/}
+            {/*<div className="mb-4">*/}
+            {/*    <p><span className="font-bold">Selected Model:</span> {selectedModel}</p>*/}
+            {/*    <p><span className="font-bold">Mode:</span> {mode}</p>*/}
+            {/*</div>*/}
+            <div className="text-gray-700 font-bold mb-4 mt-4">Image Information</div>
+            <ImageInformation imageUrl={imageUrl} dimensions={{
+                width: 1536,
+                height: 1536,
+                linkDimensions: false
+            }}/>
 
             {mode === "Text to Image" && options && (options.aspect_ratios || options.style_preset) && (
                 <div className="mb-4">
@@ -186,20 +191,20 @@ const Design: React.FC<DesignProps> = ({
                     )}
                 </div>
             )}
-            <div className="text-gray-700 font-bold mb-4 mt-4">Image Information</div>
-            <ImageInformation imageUrl={imageUrl} dimensions={dimensions} />
-            <UploadImageSection
-                onFileChange={onFileChange}
-                onUpload={onUpload}
-                uploadedImageUrl={uploadedImageUrl}
-            />
+            {mode === 'Edit (Inpaint/Outpaint)' && (
+                <UploadImageSection
+                    onFileChange={onFileChange}
+                    onUpload={onUpload}
+                    uploadedImageUrl={uploadedImageUrl}
+                />
+            )}
             <div className="text-gray-700 font-bold mb-4 mt-5">Download</div>
             <div className="mt-4 flex items-center">
                 <label className="text-gray-700">w</label>
                 <input
                     type="number"
-                    value={imageWidth}
-                    onChange={(e) => setImageWidth(Math.max(320, Math.min(1536, Number(e.target.value))))}
+                    value={dimensions.width}
+                    onChange={handleWidthChange}
                     className="w-16 mx-2 p-2 border rounded"
                 />
                 <span>🔗</span>
@@ -212,8 +217,8 @@ const Design: React.FC<DesignProps> = ({
                 <label className="text-gray-700">h</label>
                 <input
                     type="number"
-                    value={imageHeight}
-                    onChange={(e) => setImageHeight(Math.max(320, Math.min(1536, Number(e.target.value))))}
+                    value={dimensions.height}
+                    onChange={handleHeightChange}
                     className="w-16 ml-2 p-2 border rounded"
                 />
             </div>

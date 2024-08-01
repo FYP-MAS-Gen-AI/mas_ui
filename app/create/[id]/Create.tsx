@@ -32,8 +32,6 @@ export default function Create({ user }: { user: any }) {
     const [imageDimensions, setImageDimensions] = useState({ width: 1024, height: 1024 });
 
     const [aspectRatio, setAspectRatio] = useState<string>("1:1");
-    const [imageWidth, setImageWidth] = useState<number>(1024);
-    const [imageHeight, setImageHeight] = useState<number>(1024);
     const [style, setStyle] = useState<string>('');
 
     const canvasRef = useRef<any>(null);
@@ -186,9 +184,8 @@ export default function Create({ user }: { user: any }) {
                     model_id: selectedModel,
                     input: { prompt: inputValue },
                     user_id: user.id,
-                    // aspect_ratio: aspectRatio,
-                    // height: imageHeight,
-                    // width: imageWidth,
+                    aspect_ratio: aspectRatio,
+                    style: style
                 });
 
                 console.log("data", data);
@@ -261,10 +258,6 @@ export default function Create({ user }: { user: any }) {
                     setImageUrl={setImageUrl}
                     aspectRatio={aspectRatio}
                     setAspectRatio={setAspectRatio}
-                    imageWidth={imageWidth}
-                    setImageWidth={setImageWidth}
-                    imageHeight={imageHeight}
-                    setImageHeight={setImageHeight}
                     stylePreset={style}
                     setStylePreset={setStyle}
                 />

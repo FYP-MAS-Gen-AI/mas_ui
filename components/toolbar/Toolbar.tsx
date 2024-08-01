@@ -33,10 +33,6 @@ interface ToolbarProps {
     setImageUrl: React.Dispatch<React.SetStateAction<any>>;
     aspectRatio: string;
     setAspectRatio: React.Dispatch<React.SetStateAction<string>>;
-    imageWidth: number;
-    setImageWidth: React.Dispatch<React.SetStateAction<number>>;
-    imageHeight: number;
-    setImageHeight: React.Dispatch<React.SetStateAction<number>>;
     stylePreset: string;
     setStylePreset: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -116,16 +112,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
     const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newWidth = Number(e.target.value);
         setDimensions((prev: Dimensions) => {
-            const newHeight = prev.linkDimensions ? (newWidth / prev.width) * prev.height : prev.height;
-            return { ...prev, width: newWidth, height: newHeight };
+            const newHeight = prev.linkDimensions ? parseFloat(((newWidth / prev.width) * prev.height).toFixed(2)) : prev.height;
+            return { ...prev, width: parseFloat(newWidth.toFixed(2)), height: newHeight };
         });
     };
 
     const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newHeight = Number(e.target.value);
         setDimensions((prev: Dimensions) => {
-            const newWidth = prev.linkDimensions ? (newHeight / prev.height) * prev.width : prev.width;
-            return { ...prev, height: newHeight, width: newWidth };
+            const newWidth = prev.linkDimensions ? parseFloat(((newHeight / prev.height) * prev.width).toFixed(2)) : prev.width;
+            return { ...prev, height: parseFloat(newHeight.toFixed(2)), width: newWidth };
         });
     };
 
@@ -166,10 +162,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     toggleLinkDimensions={toggleLinkDimensions}
                     aspectRatio={aspectRatio}
                     setAspectRatio={setAspectRatio}
-                    imageWidth={imageWidth}
-                    setImageWidth={setImageWidth}
-                    imageHeight={imageHeight}
-                    setImageHeight={setImageHeight}
                     stylePreset={stylePreset}
                     setStylePreset={setStylePreset}
                 />
