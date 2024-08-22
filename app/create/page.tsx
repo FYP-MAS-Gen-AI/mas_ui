@@ -42,7 +42,7 @@ export default function ShowCreate() {
         }
     };
 
-    const handleUpdateSession = async (id, field, value) => {
+    const handleUpdateSession = async (id: string, field: string, value: string | number | boolean) => {
         const {data, error} = await supabase
             .from('session')
             .update({[field]: value})
@@ -60,7 +60,7 @@ export default function ShowCreate() {
         }
     };
 
-    const handleDeleteSession = async (id) => {
+    const handleDeleteSession = async (id: string) => {
         console.log("Deleting", id)
 
         const {error} = await supabase
@@ -80,7 +80,7 @@ export default function ShowCreate() {
         );
     };
 
-    const handleRowClick = (id) => {
+    const handleRowClick = (id: string) => {
         router.push(`/create/${id}`);
     };
 

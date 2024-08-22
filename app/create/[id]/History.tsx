@@ -1,10 +1,25 @@
 import React, {useState} from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 interface HistoryProps {
     messages: any[];
     sessionID: string;
     user: any;
     supabase: any;
+}
+
+interface Feedback {
+    id?: string;  // Make 'id' optional
+    message_id: string;
+    user_id: string;
+    like: boolean | null;
+    comment: string | null;
+}
+
+
+interface User {
+    id: string;
+    username: string;
 }
 
 const History: React.FC<HistoryProps> = ({
@@ -18,11 +33,11 @@ const History: React.FC<HistoryProps> = ({
     const [selectedMessage, setSelectedMessage] = useState<any>(null);
     const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState('');
-    const [feedbacks, setFeedbacks] = useState<any[]>([]);
+    const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
     const [usernames, setUsernames] = useState<{ [key: string]: string }>({});
 
     const fetchFeedbacks = async (messageID: string) => {
-        const {data, error} = await supabase
+        const { data, error } = await supabase
             .from('feedback')
             .select('*')
             .eq('message_id', messageID);
@@ -31,14 +46,14 @@ const History: React.FC<HistoryProps> = ({
             console.error('Error fetching feedbacks from Supabase', error);
         } else {
             setFeedbacks(data || []);
-            const userIds = data.map(feedback => feedback.user_id);
+            const userIds = data.map((feedback: Feedback) => feedback.user_id);
             await fetchUsernames(userIds);
         }
     };
 
     const fetchUsernames = async (userIds: string[]) => {
         const uniqueUserIds = Array.from(new Set(userIds));
-        const {data, error} = await supabase
+        const { data, error } = await supabase
             .from('profiles')
             .select('id, username')
             .in('id', uniqueUserIds);
@@ -46,13 +61,14 @@ const History: React.FC<HistoryProps> = ({
         if (error) {
             console.error('Error fetching usernames from Supabase', error);
         } else {
-            const newUsernames = {...usernames};
-            data.forEach(user => {
+            const newUsernames = { ...usernames };
+            data.forEach((user: User) => {
                 newUsernames[user.id] = user.username;
             });
             setUsernames(newUsernames);
         }
     };
+
 
     const openModal = (message: any, imageType: string) => {
         setSelectedMessage(message);
@@ -90,7 +106,7 @@ const History: React.FC<HistoryProps> = ({
             .eq('id', message.id);
 
         if (!error) {
-            setMessages(messages.map(msg => msg.id === message.id ? {...msg, star: updatedStar} : msg));
+            setFeedbacks(messages.map(msg => msg.id === message.id ? {...msg, star: updatedStar} : msg));
         }
     };
 
@@ -156,7 +172,7 @@ const History: React.FC<HistoryProps> = ({
             .eq('id', messageID);
 
         if (!error) {
-            setMessages(messages.filter(msg => msg.id !== messageID));
+            setFeedbacks(messages.filter(msg => msg.id !== messageID));
         } else {
             console.error('Error deleting message:', error);
         }
@@ -313,9 +329,9 @@ const History: React.FC<HistoryProps> = ({
                         </div>
                         <div className="mt-4">
                             <h3 className="text-lg font-bold mb-2">Previous Feedback</h3>
-                            {feedbacks.map(feedback => (
+                            {feedbacks.map((feedback: Feedback) => (
                                 feedback.comment && feedback.comment.trim() !== "" && (
-                                    <div key={feedback.id} className="bg-gray-100 p-2 rounded mb-2">
+                                    <div key={feedback.id || uuidv4()} className="bg-gray-100 p-2 rounded mb-2">
                                         <p>
                                             <strong>{usernames[feedback.user_id] || feedback.user_id}</strong>
                                             {feedback.like === true && ' 👍'}
@@ -326,6 +342,7 @@ const History: React.FC<HistoryProps> = ({
                                     </div>
                                 )
                             ))}
+
                         </div>
                     </div>
                 </div>

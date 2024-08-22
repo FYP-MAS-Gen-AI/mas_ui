@@ -81,25 +81,34 @@ const UploadImageSection: React.FC<{
     );
 };
 
-const modelOptions = {
+const modelOptions: {
+    [key: string]: {
+        aspect_ratios?: string[];
+        style_preset?: string[];
+        min_dimension?: number;
+        max_dimension?: number;
+        model?: string;
+    }
+} = {
     "stability-ultra": {
-        "aspect_ratios": ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"]
+        aspect_ratios: ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"]
     },
     "stability-core": {
-        "aspect_ratios": ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],
-        "style_preset": ["none", "3d-model", "analog-film", "anime", "cinematic", "comic-book", "digital-art", "enhance",
+        aspect_ratios: ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"],
+        style_preset: ["none", "3d-model", "analog-film", "anime", "cinematic", "comic-book", "digital-art", "enhance",
             "fantasy-art", "isometric", "line-art", "low-poly", "modeling-compound", "neon-punk",
             "origami", "photographic", "pixel-art", "tile-texture"]
     },
     "stability-diffusion": {
-        "aspect_ratios": ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"]
+        aspect_ratios: ["16:9", "1:1", "21:9", "2:3", "3:2", "4:5", "5:4", "9:16", "9:21"]
     },
     "sd1-sdai": {
-        "min_dimension": 320,
-        "max_dimension": 1536,
-        "model": "stable-diffusion-xl-1024-v1-0"
+        min_dimension: 320,
+        max_dimension: 1536,
+        model: "stable-diffusion-xl-1024-v1-0"
     }
 };
+
 
 const Design: React.FC<DesignProps> = ({
                                            mode = "Text to Image",
@@ -121,7 +130,7 @@ const Design: React.FC<DesignProps> = ({
                                            setStylePreset
                                        }) => {
 
-    const [imageInfo, setImageInfo] = useState({width: 0, height: 0, size: 0});
+    // const [imageInfo, setImageInfo] = useState({width: 0, height: 0, size: 0});
 
     useEffect(() => {
         console.log('Image URL:', imageUrl);
@@ -132,11 +141,11 @@ const Design: React.FC<DesignProps> = ({
                 .then((blob) => {
                     const img = new Image();
                     img.onload = () => {
-                        setImageInfo({
-                            width: img.width,
-                            height: img.height,
-                            size: blob.size,
-                        });
+                        // setImageInfo({
+                        //     width: img.width,
+                        //     height: img.height,
+                        //     size: blob.size,
+                        // });
                         setDimensions((prev: Dimensions) => ({
                             ...prev,
                             width: img.width,
@@ -173,7 +182,7 @@ const Design: React.FC<DesignProps> = ({
         };
     };
 
-    const options = modelOptions[selectedModel];
+    const options = modelOptions[selectedModel as keyof typeof modelOptions] || {};
 
     useEffect(() => {
         if (options) {

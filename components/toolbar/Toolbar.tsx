@@ -58,10 +58,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              setImageUrl,
                                              aspectRatio,
                                              setAspectRatio,
-                                             imageWidth,
-                                             setImageWidth,
-                                             imageHeight,
-                                             setImageHeight,
                                              stylePreset,
                                              setStylePreset
                                          }) => {
