@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import ImageInformation from "@/app/create/[id]/ImageInformation";
 
 interface Dimensions {
@@ -17,6 +17,7 @@ interface DesignProps {
     onShowModal: () => void;
     selectedImage: any;
     dimensions: Dimensions;
+    setDimensions: React.Dispatch<React.SetStateAction<Dimensions>>;
     handleWidthChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     toggleLinkDimensions: () => void;
@@ -26,11 +27,32 @@ interface DesignProps {
     setStylePreset: React.Dispatch<React.SetStateAction<string>>;
 }
 
+const stylePresetLabels: { [key: string]: string } = {
+    "none": "None",
+    "3d-model": "3D Look",
+    "analog-film": "Vintage Camera",
+    "anime": "Anime",
+    "cinematic": "Cinematic",
+    "comic-book": "Comic Strip",
+    "digital-art": "Digital Painting",
+    "enhance": "Enhanced Detail",
+    "fantasy-art": "Magical Fantasy",
+    "isometric": "3D Diagram",
+    "line-art": "Simple Drawing",
+    "low-poly": "Blocky Shapes",
+    "modeling-compound": "Clay Model",
+    "neon-punk": "Neon Glow",
+    "origami": "Paper Craft",
+    "photographic": "Realistic Photo",
+    "pixel-art": "Retro Pixels",
+    "tile-texture": "Repeating Pattern",
+};
+
 const UploadImageSection: React.FC<{
     onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onUpload: () => void;
     uploadedImageUrl: string;
-}> = ({ onFileChange, onUpload, uploadedImageUrl }) => {
+}> = ({onFileChange, onUpload, uploadedImageUrl}) => {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState('');
 
@@ -46,7 +68,7 @@ const UploadImageSection: React.FC<{
     return (
         <>
             <div className="text-gray-700 font-bold mb-4 mt-6">Upload Image</div>
-            <input type="file" onChange={onFileChange} className="mb-2" />
+            <input type="file" onChange={onFileChange} className="mb-2"/>
             <button
                 onClick={handleUpload}
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
@@ -89,6 +111,7 @@ const Design: React.FC<DesignProps> = ({
                                            onShowModal,
                                            selectedImage,
                                            dimensions,
+                                           setDimensions,
                                            handleWidthChange,
                                            handleHeightChange,
                                            toggleLinkDimensions,
@@ -97,6 +120,35 @@ const Design: React.FC<DesignProps> = ({
                                            stylePreset = "none",
                                            setStylePreset
                                        }) => {
+
+    const [imageInfo, setImageInfo] = useState({width: 0, height: 0, size: 0});
+
+    useEffect(() => {
+        console.log('Image URL:', imageUrl);
+        console.log('Image Dimensions:', dimensions);
+        if (imageUrl) {
+            fetch(imageUrl)
+                .then((response) => response.blob())
+                .then((blob) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        setImageInfo({
+                            width: img.width,
+                            height: img.height,
+                            size: blob.size,
+                        });
+                        setDimensions((prev: Dimensions) => ({
+                            ...prev,
+                            width: img.width,
+                            height: img.height,
+                        }));
+                    };
+                    img.src = URL.createObjectURL(blob);
+                })
+                .catch((error) => console.error('Error fetching image info:', error));
+        }
+    }, [imageUrl]);
+
     const downloadImage = (imageUrl: string) => {
         const img = new Image();
         img.src = imageUrl;
@@ -136,17 +188,9 @@ const Design: React.FC<DesignProps> = ({
 
     return (
         <>
-            {/*<div className="text-gray-700 font-bold mb-4 mt-4">Selected Model and Mode</div>*/}
-            {/*<div className="mb-4">*/}
-            {/*    <p><span className="font-bold">Selected Model:</span> {selectedModel}</p>*/}
-            {/*    <p><span className="font-bold">Mode:</span> {mode}</p>*/}
-            {/*</div>*/}
             <div className="text-gray-700 font-bold mb-4 mt-4">Image Information</div>
-            <ImageInformation imageUrl={imageUrl} dimensions={{
-                width: 1536,
-                height: 1536,
-                linkDimensions: false
-            }}/>
+            <ImageInformation imageUrl={imageUrl} dimensions={dimensions}/>
+
 
             {mode === "Text to Image" && options && (options.aspect_ratios || options.style_preset) && (
                 <div className="mb-4">
@@ -175,11 +219,13 @@ const Design: React.FC<DesignProps> = ({
                                 onChange={(e) => setStylePreset(e.target.value)}
                                 className="ml-2 p-2 border rounded"
                             >
-                                {options.style_preset.map((preset) => (
-                                    <option key={preset} value={preset}>
-                                        {preset}
-                                    </option>
-                                ))}
+                                {options.style_preset
+                                    .filter((preset) => stylePresetLabels[preset])
+                                    .map((preset) => (
+                                        <option key={preset} value={preset}>
+                                            {stylePresetLabels[preset]}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
                     )}
@@ -197,6 +243,33 @@ const Design: React.FC<DesignProps> = ({
                     onUpload={onUpload}
                     uploadedImageUrl={uploadedImageUrl}
                 />
+            )}
+            {mode === 'Text and Image to Image' && (
+                <>
+                    <UploadImageSection
+                        onFileChange={onFileChange}
+                        onUpload={onUpload}
+                        uploadedImageUrl={uploadedImageUrl}
+                    />
+                    <div className="mt-4">
+                        <button
+                            onClick={onShowModal}
+                            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+                        >
+                            Select Reference Image
+                        </button>
+                        <div className="mt-2">
+                            {selectedImage && (
+                                <div>
+                                    <img src={selectedImage.url} alt={selectedImage.title} className="w-full rounded"/>
+                                    <button onClick={() => downloadImage(selectedImage.url)}
+                                            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Download
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </>
             )}
             <div className="text-gray-700 font-bold mb-4 mt-5">Download</div>
             <div className="mt-4 flex items-center">

@@ -157,6 +157,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     onShowModal={onShowModal}
                     selectedImage={selectedImage}
                     dimensions={dimensions}
+                    setDimensions={setDimensions}
                     handleWidthChange={handleWidthChange}
                     handleHeightChange={handleHeightChange}
                     toggleLinkDimensions={toggleLinkDimensions}

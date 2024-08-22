@@ -245,11 +245,11 @@ const History: React.FC<HistoryProps> = ({
                             <h2 className="text-xl font-bold">Image View</h2>
                             <button onClick={closeModal} className="text-black">X</button>
                         </div>
-                        <div className="mt-4">
+                        <div className="mt-4 max-h-screen overflow-auto">
                             {selectedImageType === 'gen_img_id' && selectedMessage.gen_img_id && (
                                 <div className="flex flex-col items-center">
                                     <img src={selectedMessage.gen_img_id} alt={`Generated ${selectedMessage.id}`}
-                                         className="w-full rounded"/>
+                                         className="w-full max-h-[80vh] object-contain rounded"/>
                                     <button onClick={() => downloadImage(selectedMessage.gen_img_id)}
                                             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Download
                                     </button>
@@ -258,7 +258,7 @@ const History: React.FC<HistoryProps> = ({
                             {selectedImageType === 'input_img_id' && selectedMessage.input_img_id && (
                                 <div className="flex flex-col items-center">
                                     <img src={selectedMessage.input_img_id} alt={`Input ${selectedMessage.id}`}
-                                         className="w-full rounded"/>
+                                         className="w-full max-h-[80vh] object-contain rounded"/>
                                     <button onClick={() => downloadImage(selectedMessage.input_img_id)}
                                             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Download
                                     </button>
@@ -267,7 +267,7 @@ const History: React.FC<HistoryProps> = ({
                             {selectedImageType === 'ref_img_id' && selectedMessage.ref_img_id && (
                                 <div className="flex flex-col items-center">
                                     <img src={selectedMessage.ref_img_id} alt={`Reference ${selectedMessage.id}`}
-                                         className="w-full rounded"/>
+                                         className="w-full max-h-[80vh] object-contain rounded"/>
                                     <button onClick={() => downloadImage(selectedMessage.ref_img_id)}
                                             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Download
                                     </button>
@@ -277,6 +277,7 @@ const History: React.FC<HistoryProps> = ({
                     </div>
                 </div>
             )}
+
 
             {feedbackModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">

@@ -28,7 +28,6 @@ const InputSection: React.FC<InputSectionProps> = ({
                                                        isLoading, // Add isLoading prop
                                                    }) => {
     const [models, setModels] = useState<Model[]>([]);
-    const [optimizationInput, setOptimizationInput] = useState<string>('');
     const [optimizedPrompt, setOptimizedPrompt] = useState<string>('');
     const supabase = getSupabaseBrowserClient();
 
@@ -48,8 +47,7 @@ const InputSection: React.FC<InputSectionProps> = ({
     const handleOptimization = async () => {
         try {
             const payload = {
-                existing_prompt: inputValue,
-                new_user_input_prompt: optimizationInput,
+                prompt: inputValue,
             };
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_NLP_BACKEND_URL}/optimize_text_prompt`, {
@@ -65,7 +63,7 @@ const InputSection: React.FC<InputSectionProps> = ({
                 console.log('Optimized prompt:', result.optimized_prompt);
                 console.log('Optimized prompt:', result.optimized_prompt[0]);
                 console.log('Optimized prompt:', result.optimized_prompt[0].generated_text);
-                setOptimizedPrompt(result.optimized_prompt[0].generated_text);
+                setOptimizedPrompt(result.optimized_prompt);
             } else {
                 console.error('Failed to optimize text prompt:', response.statusText);
             }
