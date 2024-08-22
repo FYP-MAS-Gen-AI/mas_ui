@@ -7,7 +7,7 @@ interface EditProps {
     setTool: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Edit: React.FC<EditProps> = ({ brushSize, setBrushSize, tool, setTool }) => {
+const Edit: React.FC<EditProps> = ({brushSize, setBrushSize, tool, setTool}) => {
     return (
         <div>
             <div className="mt-4">

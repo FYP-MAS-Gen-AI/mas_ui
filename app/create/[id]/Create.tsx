@@ -1,19 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import NavBar from '@/components/navbar/NavBar';
 import Toolbar from '@/components/toolbar/Toolbar';
 import InputSection from '@/components/input_section/InputSection';
 import DrawingCanvas from '@/components/toolbar/DrawingContext';
-import { generateImage, saveUrlToSupabase, uploadImageToCloudinary } from '@/components/apis/Apis';
+import {generateImage, saveUrlToSupabase, uploadImageToCloudinary} from '@/components/apis/Apis';
 import useSupabaseClient from "@/lib/supabase/client";
-import { usePathname } from 'next/navigation';
+import {usePathname} from 'next/navigation';
 import Modal from "@/app/create/[id]/Modal";
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_MAIN_BACKEND_URL;
 
-export default function Create({ user }: { user: any }) {
+export default function Create({user}: { user: any }) {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState<string>('');
     const [selectedModel, setSelectedModel] = useState<string>('sd-getai');
@@ -28,8 +28,8 @@ export default function Create({ user }: { user: any }) {
     const [tool, setTool] = useState<string>('brush');
     const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
 
-    const [dimensions, setDimensions] = useState({ width: 1024, height: 1024, linkDimensions: true });
-    const [imageDimensions, setImageDimensions] = useState({ width: 1024, height: 1024 });
+    const [dimensions, setDimensions] = useState({width: 1024, height: 1024, linkDimensions: true});
+    const [imageDimensions, setImageDimensions] = useState({width: 1024, height: 1024});
 
     const [aspectRatio, setAspectRatio] = useState<string>("1:1");
     const [style, setStyle] = useState<string>('');
@@ -42,7 +42,7 @@ export default function Create({ user }: { user: any }) {
 
     useEffect(() => {
         const fetchFiles = async () => {
-            const { data, error } = await supabase.from('images').select('*').eq("ref", true);
+            const {data, error} = await supabase.from('images').select('*').eq("ref", true);
             if (error) {
                 console.error('Error fetching files from Supabase', error);
             } else {
@@ -114,7 +114,7 @@ export default function Create({ user }: { user: any }) {
 
                         console.log("Generated image URL:", generatedImageUrl);
                         if (generatedImageUrl) {
-                            const { data, error } = await supabase
+                            const {data, error} = await supabase
                                 .from('messages')
                                 .insert([{
                                     session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageUrl,
@@ -160,7 +160,7 @@ export default function Create({ user }: { user: any }) {
 
                     console.log("Generated image URL:", generatedImageUrl);
                     if (generatedImageUrl) {
-                        const { data, error } = await supabase
+                        const {data, error} = await supabase
                             .from('messages')
                             .insert([{
                                 session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageUrl,
@@ -182,7 +182,7 @@ export default function Create({ user }: { user: any }) {
                 console.log("Generating image with Text", inputValue, selectedModel, user.id);
                 const data = await generateImage(`${BASE_URL}/textToImage`, {
                     model_id: selectedModel,
-                    input: { prompt: inputValue },
+                    input: {prompt: inputValue},
                     user_id: user.id,
                     aspect_ratio: aspectRatio,
                     style: style
@@ -195,7 +195,7 @@ export default function Create({ user }: { user: any }) {
 
                     console.log("Generated image URL:", generatedImageUrl);
                     if (generatedImageUrl) {
-                        const { data, error } = await supabase
+                        const {data, error} = await supabase
                             .from('messages')
                             .insert([{
                                 session_id: session_id, text: inputValue, type: mode, gen_img_id: generatedImageUrl,
@@ -222,7 +222,7 @@ export default function Create({ user }: { user: any }) {
 
     const handleDeleteImage = async (fileId: string) => {
         try {
-            const { error } = await supabase.from('images').delete().eq('id', fileId);
+            const {error} = await supabase.from('images').delete().eq('id', fileId);
             if (error) {
                 console.error('Error deleting file from Supabase', error);
             } else {
@@ -235,7 +235,7 @@ export default function Create({ user }: { user: any }) {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <NavBar selectedTab={selectedTab} onSelectTab={setSelectedTab} />
+            <NavBar selectedTab={selectedTab} onSelectTab={setSelectedTab}/>
             <div className="flex flex-1 mt-12">
                 <Toolbar
                     mode={mode}

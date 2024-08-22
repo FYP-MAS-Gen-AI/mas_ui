@@ -8,7 +8,7 @@ interface HistoryProps {
     setModel: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function History({ model, setModel }: HistoryProps) {
+export default function History({model, setModel}: HistoryProps) {
     const cld = new Cloudinary({
         cloud: {
             cloudName: 'det0mvsek'
@@ -49,8 +49,8 @@ export default function History({ model, setModel }: HistoryProps) {
 
     return (
         <div>
-            <AdvancedImage cldImg={myImage} />
-            <input type="file" onChange={handleFileChange} />
+            <AdvancedImage cldImg={myImage}/>
+            <input type="file" onChange={handleFileChange}/>
             <button onClick={handleUpload}>Upload Image</button>
             {imageUrl && <p>Image URL: {imageUrl}</p>}
         </div>

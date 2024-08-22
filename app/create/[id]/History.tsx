@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 
 interface HistoryProps {
     messages: any[];
@@ -22,7 +22,7 @@ const History: React.FC<HistoryProps> = ({
     const [usernames, setUsernames] = useState<{ [key: string]: string }>({});
 
     const fetchFeedbacks = async (messageID: string) => {
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('feedback')
             .select('*')
             .eq('message_id', messageID);
@@ -38,7 +38,7 @@ const History: React.FC<HistoryProps> = ({
 
     const fetchUsernames = async (userIds: string[]) => {
         const uniqueUserIds = Array.from(new Set(userIds));
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('profiles')
             .select('id, username')
             .in('id', uniqueUserIds);
@@ -46,7 +46,7 @@ const History: React.FC<HistoryProps> = ({
         if (error) {
             console.error('Error fetching usernames from Supabase', error);
         } else {
-            const newUsernames = { ...usernames };
+            const newUsernames = {...usernames};
             data.forEach(user => {
                 newUsernames[user.id] = user.username;
             });
@@ -84,13 +84,13 @@ const History: React.FC<HistoryProps> = ({
 
     const toggleStar = async (message: any) => {
         const updatedStar = !message.star;
-        const { error } = await supabase
+        const {error} = await supabase
             .from('messages')
-            .update({ star: updatedStar })
+            .update({star: updatedStar})
             .eq('id', message.id);
 
         if (!error) {
-            setMessages(messages.map(msg => msg.id === message.id ? { ...msg, star: updatedStar } : msg));
+            setMessages(messages.map(msg => msg.id === message.id ? {...msg, star: updatedStar} : msg));
         }
     };
 
@@ -105,7 +105,7 @@ const History: React.FC<HistoryProps> = ({
     };
 
     const submitFeedback = async () => {
-        const { error } = await supabase
+        const {error} = await supabase
             .from('feedback')
             .insert({
                 message_id: selectedMessage.id,
@@ -128,7 +128,7 @@ const History: React.FC<HistoryProps> = ({
     };
 
     const handleLikeDislike = async (likeValue: boolean) => {
-        const { error } = await supabase
+        const {error} = await supabase
             .from('feedback')
             .insert({
                 message_id: selectedMessage.id,
@@ -150,7 +150,7 @@ const History: React.FC<HistoryProps> = ({
     };
 
     const deleteMessage = async (messageID: string) => {
-        const { error } = await supabase
+        const {error} = await supabase
             .from('messages')
             .delete()
             .eq('id', messageID);
@@ -165,7 +165,7 @@ const History: React.FC<HistoryProps> = ({
     const getLikeDislikeCounts = () => {
         const likeCount = feedbacks.filter(feedback => feedback.like === true).length;
         const dislikeCount = feedbacks.filter(feedback => feedback.like === false).length;
-        return { likeCount, dislikeCount };
+        return {likeCount, dislikeCount};
     };
 
     return (

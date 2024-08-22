@@ -1,18 +1,17 @@
 import Link from 'next/link';
 import getUserSession from '@/lib/getUserSession';
-import { ModeToggle } from "@/components/mode-toggle";
-import ProfileDropdown from '@/components/navbar/ProfileDropdown';
 import React from "react";
 
 const Header = async () => {
-    const { data } = await getUserSession();
+    const {data} = await getUserSession();
 
     return (
         <header className='bg-[#212121] dark:bg-gray-800 shadow-md'>
             <nav className='container mx-auto flex justify-between items-center h-20 px-4'>
                 <div>
-                    <Link href='' className='text-[#77797C] dark:text-[#77797C] text-2xl font-semibold flex items-center'>
-                        <img src="./mas_logo.png" alt="mas logo" className="w-8 h-8 mr-3" />
+                    <Link href=''
+                          className='text-[#77797C] dark:text-[#77797C] text-2xl font-semibold flex items-center'>
+                        <img src="./mas_logo.png" alt="mas logo" className="w-8 h-8 mr-3"/>
                         Artwork Generator
                     </Link>
                 </div>

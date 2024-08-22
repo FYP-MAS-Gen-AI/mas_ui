@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import useSupabaseClient from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 
 export default function ShowCreate() {
     const [isLoading, setIsLoading] = useState(true);
@@ -12,10 +12,10 @@ export default function ShowCreate() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data, error } = await supabase
+            const {data, error} = await supabase
                 .from("session")
                 .select()
-                .order('created_at', { ascending: false });
+                .order('created_at', {ascending: false});
 
             if (data) {
                 setSessionList(data);
@@ -30,7 +30,7 @@ export default function ShowCreate() {
     }, [supabase]);
 
     const handleCreateSession = async () => {
-        const { data, error } = await supabase.from("session").insert({}).select();
+        const {data, error} = await supabase.from("session").insert({}).select();
 
         if (error) {
             console.error("Error creating a new session:", error);
@@ -43,9 +43,9 @@ export default function ShowCreate() {
     };
 
     const handleUpdateSession = async (id, field, value) => {
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('session')
-            .update({ [field]: value })
+            .update({[field]: value})
             .eq('id', id)
             .select();
 
@@ -63,7 +63,7 @@ export default function ShowCreate() {
     const handleDeleteSession = async (id) => {
         console.log("Deleting", id)
 
-        const { error } = await supabase
+        const {error} = await supabase
             .from('session')
             .delete()
             .eq('id', id);
@@ -71,8 +71,7 @@ export default function ShowCreate() {
         if (error) {
             console.error(`Error deleting session ${id}:`, error);
             return;
-        }
-        else {
+        } else {
             console.log("Deleted")
         }
 

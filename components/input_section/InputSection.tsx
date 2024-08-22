@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getSupabaseBrowserClient } from "@/lib/supabase/client"; // Ensure the correct path
+import React, {useEffect, useState} from 'react';
+import {getSupabaseBrowserClient} from "@/lib/supabase/client"; // Ensure the correct path
 
 interface InputSectionProps {
     mode: string;
@@ -33,7 +33,7 @@ const InputSection: React.FC<InputSectionProps> = ({
 
     useEffect(() => {
         const fetchModels = async () => {
-            const { data, error } = await supabase.from('models').select('code_name, show_name').eq('enable', true);
+            const {data, error} = await supabase.from('models').select('code_name, show_name').eq('enable', true);
             if (error) {
                 console.error('Error fetching models:', error);
             } else {
@@ -73,7 +73,7 @@ const InputSection: React.FC<InputSectionProps> = ({
     };
 
     const applyOptimizedPrompt = () => {
-        onInputChange({ target: { value: optimizedPrompt } } as React.ChangeEvent<HTMLInputElement>);
+        onInputChange({target: {value: optimizedPrompt}} as React.ChangeEvent<HTMLInputElement>);
     };
 
     const filteredModels = models.filter(model => {

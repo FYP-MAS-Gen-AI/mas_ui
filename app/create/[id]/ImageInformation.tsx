@@ -11,8 +11,8 @@ interface ImageInformationProps {
     dimensions: Dimensions;
 }
 
-const ImageInformation: React.FC<ImageInformationProps> = ({ imageUrl, dimensions }) => {
-    const [imageInfo, setImageInfo] = useState({ width: 0, height: 0, size: 0 });
+const ImageInformation: React.FC<ImageInformationProps> = ({imageUrl, dimensions}) => {
+    const [imageInfo, setImageInfo] = useState({width: 0, height: 0, size: 0});
 
     useEffect(() => {
         if (imageUrl) {

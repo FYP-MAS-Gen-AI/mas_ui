@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import useSupabaseClient from "@/lib/supabase/client";
 import Design from "@/app/create/[id]/Design";
 import Edit from "@/app/create/[id]/Edit";
@@ -39,7 +39,7 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({
                                              mode,
-                                                selectedTab,
+                                             selectedTab,
                                              imageUrl,
                                              onFileChange,
                                              onUpload,
@@ -62,18 +62,18 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              setImageWidth,
                                              imageHeight,
                                              setImageHeight,
-                                                stylePreset,
-                                                setStylePreset
+                                             stylePreset,
+                                             setStylePreset
                                          }) => {
     const [messages, setMessages] = useState<any[]>([]);
     const supabase = useSupabaseClient();
 
     const fetchMessages = async () => {
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('messages')
             .select('*')
             .eq('session_id', sessionID)
-            .order('created_at', { ascending: false });
+            .order('created_at', {ascending: false});
 
         if (error) {
             console.error('Error fetching messages from Supabase', error);
@@ -113,7 +113,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         const newWidth = Number(e.target.value);
         setDimensions((prev: Dimensions) => {
             const newHeight = prev.linkDimensions ? parseFloat(((newWidth / prev.width) * prev.height).toFixed(2)) : prev.height;
-            return { ...prev, width: parseFloat(newWidth.toFixed(2)), height: newHeight };
+            return {...prev, width: parseFloat(newWidth.toFixed(2)), height: newHeight};
         });
     };
 
@@ -121,16 +121,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
         const newHeight = Number(e.target.value);
         setDimensions((prev: Dimensions) => {
             const newWidth = prev.linkDimensions ? parseFloat(((newHeight / prev.height) * prev.width).toFixed(2)) : prev.width;
-            return { ...prev, height: parseFloat(newHeight.toFixed(2)), width: newWidth };
+            return {...prev, height: parseFloat(newHeight.toFixed(2)), width: newWidth};
         });
     };
 
     const toggleLinkDimensions = () => {
-        setDimensions((prev: Dimensions) => ({ ...prev, linkDimensions: !prev.linkDimensions }));
+        setDimensions((prev: Dimensions) => ({...prev, linkDimensions: !prev.linkDimensions}));
     };
 
     const handleImageGenerated = (url: string) => {
-        setMessages([...messages, { type: 'Generated Image', gen_img_id: url }]);
+        setMessages([...messages, {type: 'Generated Image', gen_img_id: url}]);
         setImageUrl(url);
     };
 

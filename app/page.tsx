@@ -5,7 +5,7 @@ import React from "react";
 export default function Home() {
     return (
         <div className="bg-[#2F2F2F] min-h-screen">
-            <Header />
+            <Header/>
             <section className='bg-[#2F2F2F] min-h-screen mb-12'>
                 <div
                     className='mx-auto bg-white rounded-md h-[30rem] flex justify-center items-center shadow-lg'>

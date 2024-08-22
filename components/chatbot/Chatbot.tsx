@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import useSupabaseClient from "@/lib/supabase/client";
 
 interface ChatbotProps {
@@ -10,7 +10,7 @@ interface ChatbotProps {
     onImageGenerated: (url: string) => void;
 }
 
-const Chatbot: React.FC<ChatbotProps> = ({ imageUrl, refImageUrl, userId, modelId, sessionId, onImageGenerated }) => {
+const Chatbot: React.FC<ChatbotProps> = ({imageUrl, refImageUrl, userId, modelId, sessionId, onImageGenerated}) => {
     const [message, setMessage] = useState('');
     const [chatHistory, setChatHistory] = useState<string[]>([]);
     const [isSending, setIsSending] = useState(false);
@@ -18,10 +18,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ imageUrl, refImageUrl, userId, modelI
     const supabase = useSupabaseClient();
 
     const saveMessageToDatabase = async (message: string, role: 'user' | 'bot') => {
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('chats')
             .insert([
-                { session_id: sessionId, user_id: userId, message: message, role },
+                {session_id: sessionId, user_id: userId, message: message, role},
             ]);
 
         if (error) {
@@ -99,11 +99,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ imageUrl, refImageUrl, userId, modelI
     };
 
     const fetchChatHistory = async () => {
-        const { data, error } = await supabase
+        const {data, error} = await supabase
             .from('chats')
             .select('*')
             .eq('session_id', sessionId)
-            .order('created_at', { ascending: true });
+            .order('created_at', {ascending: true});
 
         if (error) {
             console.error('Error fetching chat history:', error);
@@ -118,13 +118,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ imageUrl, refImageUrl, userId, modelI
     }, [sessionId]);
 
     const createMarkup = (html: string) => {
-        return { __html: html };
+        return {__html: html};
     };
 
     return (
         <div className="flex flex-col h-full">
             <div className="flex-grow overflow-y-auto p-4 bg-gray-100 rounded mb-4"
-                 style={{ height: 'calc(100vh - 120px)', wordBreak: 'break-word' }}>
+                 style={{height: 'calc(100vh - 120px)', wordBreak: 'break-word'}}>
                 {chatHistory.map((chat, index) => (
                     <div
                         key={index}

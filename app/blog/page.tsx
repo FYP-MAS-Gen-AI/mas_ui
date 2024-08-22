@@ -8,7 +8,9 @@ const styles = () => {
 
             <section className="mb-12">
                 <h2 className="text-2xl font-semibold mb-4">Prompt 1: Cute and whimsical witch pattern</h2>
-                <p>Featuring playful witches with friendly expressions, magical elements like stars, moons, and broomsticks, in a vibrant color palette with pastel tones, suitable for kids' clothing and accessories.</p>
+                <p>Featuring playful witches with friendly expressions, magical elements like stars, moons, and
+                    broomsticks, in a vibrant color palette with pastel tones, suitable for kids' clothing and
+                    accessories.</p>
                 {/*<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">*/}
                 {/*    <img src="/blog-images/img.png" alt="Without Style" />*/}
                 {/*    <img src="/blog-images/img_1.png" alt="3D Model" />*/}
