@@ -142,7 +142,7 @@ const Chatbot: React.FC<ChatbotProps> = ({imageUrl, refImageUrl, userId, modelId
                     placeholder="Type a message..."
                 />
                 <button
-                    onClick={handleSendMessage}
+                    // onClick={handleSendMessage}
                     className="bg-blue-500 text-white py-2 px-4 rounded"
                     disabled={isSending}
                 >

@@ -117,7 +117,8 @@ const InputSection: React.FC<InputSectionProps> = ({
                 placeholder="Enter input for image generation"
             />
             <button
-                onClick={handleOptimization}
+                // onClick={handleOptimization}
+                disabled={true}
                 className="w-full bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition-colors mb-2"
             >
                 Optimize Prompt
@@ -129,7 +130,8 @@ const InputSection: React.FC<InputSectionProps> = ({
                 </div>
             )}
             <button
-                onClick={applyOptimizedPrompt}
+                // onClick={applyOptimizedPrompt}
+                disabled={true}
                 className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors mb-2"
             >
                 Apply Optimized Prompt
