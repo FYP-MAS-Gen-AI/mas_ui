@@ -1,19 +1,25 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import {saveUrlToSupabase, uploadImageToCloudinary} from "@/components/apis/Apis";
+import useSupabaseClient from "@/lib/supabase/client";
 
 interface DrawingCanvasProps {
     imageUrl: string | null;
+    setImageUrl: React.Dispatch<React.SetStateAction<string | null>>;
     brushSize: number;
     tool: string;
-    imageDimensions: { width: number; height: number; };
-    setImageDimensions: React.Dispatch<React.SetStateAction<{ width: number; height: number; }>>;
+    user: any;
+    mode: string;
+    selectedTab: string;
 }
 
 const DrawingCanvas = forwardRef(({
                                       imageUrl,
+                                      setImageUrl,
                                       brushSize,
                                       tool,
-                                      imageDimensions,
-                                      setImageDimensions
+                                      user,
+                                      mode,
+                                      selectedTab
                                   }: DrawingCanvasProps, ref) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const maskCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -22,6 +28,9 @@ const DrawingCanvas = forwardRef(({
     const maskCtxRef = useRef<CanvasRenderingContext2D | null>(null);
     const isDrawingRef = useRef<boolean>(false);
     const [mousePosition, setMousePosition] = useState<{ x: number, y: number } | null>(null);
+    const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'done' | 'failed'>('idle');
+
+    const supabase = useSupabaseClient();
 
     const initializeCanvas = () => {
         const canvas = canvasRef.current;
@@ -47,7 +56,6 @@ const DrawingCanvas = forwardRef(({
                 setToolAndBrush(ctx, maskCtx);
             }
         }
-        console.log(maskCanvas?.width, maskCanvas?.height)
     };
 
     const setToolAndBrush = (ctx: CanvasRenderingContext2D, maskCtx: CanvasRenderingContext2D) => {
@@ -114,6 +122,30 @@ const DrawingCanvas = forwardRef(({
         setMousePosition({x: offsetX, y: offsetY});
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setUploadStatus('uploading');
+            try {
+                // Upload the image to Cloudinary
+                const url = await uploadImageToCloudinary(file);
+                if (url) {
+                    // Update the imageUrl with the Cloudinary URL
+                    setImageUrl(url);
+                    setUploadStatus('done');
+
+                    const data = await saveUrlToSupabase(supabase, 'images', url, user.id, true, 'input');
+                    if (Array.isArray(data)) {
+                        console.log('Saved to Supabase:', data);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to upload image:', error);
+                setUploadStatus('failed');
+            }
+        }
+    };
+
     useImperativeHandle(ref, () => ({
         getCanvasDataUrl: () => {
             if (maskCanvasRef.current) {
@@ -126,40 +158,68 @@ const DrawingCanvas = forwardRef(({
         }
     }));
 
+    const renderUploadStatus = () => {
+        switch (uploadStatus) {
+            case 'uploading':
+                return '⏳ Uploading...';
+            case 'done':
+                return '✅ Upload Successful!';
+            case 'failed':
+                return '❌ Upload Failed!';
+            default:
+                return null;
+        }
+    };
+
     return (
-        <div className="relative">
-            {imageUrl && <img ref={imgRef} src={imageUrl} alt="Selected"
-                // className="w-full"
-                              className="w-[500px]"
-                              crossOrigin="anonymous" onLoad={initializeCanvas}/>}
-            <canvas
-                ref={canvasRef}
-                className="absolute top-0 left-0 w-full h-full"
-                style={{background: 'transparent'}}
-                onMouseDown={startDrawing}
-                onMouseUp={finishDrawing}
-                onMouseMove={(e) => {
-                    draw(e);
-                    handleMouseMove(e);
-                }}
-            />
-            <canvas
-                ref={maskCanvasRef}
-                className="hidden"
-            />
-            {mousePosition && tool !== 'none' && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: mousePosition.y - brushSize / 2,
-                        left: mousePosition.x - brushSize / 2,
-                        width: brushSize,
-                        height: brushSize,
-                        borderRadius: '50%',
-                        border: '1px solid black',
-                        pointerEvents: 'none'
+        <div className="relative flex">
+            <div className="relative">
+                {imageUrl && <img ref={imgRef} src={imageUrl} alt="Selected"
+                                  className="w-[500px]"
+                                  crossOrigin="anonymous" onLoad={initializeCanvas}/>}
+                <canvas
+                    ref={canvasRef}
+                    className="absolute top-0 left-0 w-full h-full"
+                    style={{background: 'transparent'}}
+                    onMouseDown={startDrawing}
+                    onMouseUp={finishDrawing}
+                    onMouseMove={(e) => {
+                        draw(e);
+                        handleMouseMove(e);
                     }}
                 />
+                <canvas
+                    ref={maskCanvasRef}
+                    className="hidden"
+                />
+                {mousePosition && tool !== 'none' && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: mousePosition.y - brushSize / 2,
+                            left: mousePosition.x - brushSize / 2,
+                            width: brushSize,
+                            height: brushSize,
+                            borderRadius: '50%',
+                            border: '1px solid black',
+                            pointerEvents: 'none'
+                        }}
+                    />
+                )}
+            </div>
+            {/*show this only if mode is "Edit (Inpaint/Outpaint)" and selectedTab is "Design"*/}
+            {mode === 'Edit (Inpaint/Outpaint)' && selectedTab === 'Design' && (
+                <div className="fixed right-0">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className=""
+                    />
+                    <div className="mt-2">
+                        {renderUploadStatus()}
+                    </div>
+                </div>
             )}
         </div>
     );

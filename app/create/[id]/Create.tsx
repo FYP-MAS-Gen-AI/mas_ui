@@ -79,6 +79,7 @@ export default function Create({user}: { user: any }) {
         try {
             if (mode === 'Edit (Inpaint/Outpaint)') {
                 console.log("Generating image with Inpaint and Outpaint");
+                console.log("Canvas ref", canvasRef.current);
                 const maskDataUrl = canvasRef.current ? canvasRef.current.getCanvasDataUrl() : '';
                 console.log("maskDataUrl", maskDataUrl);
                 const maskUrl = await uploadImageToCloudinary(maskDataUrl);
@@ -266,10 +267,12 @@ export default function Create({user}: { user: any }) {
                     <div className="flex-1 flex justify-center items-center bg-gray-100 p-4">
                         <DrawingCanvas
                             imageUrl={imageUrl}
+                            setImageUrl={setImageUrl}
                             brushSize={brushSize}
                             tool={tool}
-                            imageDimensions={imageDimensions}
-                            setImageDimensions={setImageDimensions}
+                            user={user}
+                            mode={mode}
+                            selectedTab={selectedTab}
                             ref={canvasRef}
                         />
                     </div>

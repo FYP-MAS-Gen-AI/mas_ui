@@ -324,7 +324,7 @@ const Design: React.FC<DesignProps> = ({
                             {selectedImage && (
                                 <div>
                                     <img src={selectedImage.url} alt={selectedImage.title} className="w-full rounded"/>
-                                    <button onClick={() => downloadImage(selectedImage.url)}
+                                    <button onClick={() => downloadImage(selectedImage.url, 0, 0, "fabric pattern design")}
                                             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Download
                                     </button>
                                 </div>
