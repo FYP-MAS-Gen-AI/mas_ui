@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import getUserSession from '@/lib/getUserSession';
 import React from "react";
+import {ModeToggle} from "@/components/mode-toggle";
+import ProfileDropdown from "@/components/navbar/ProfileDropdown";
 
 const Header = async () => {
     const {data} = await getUserSession();
@@ -49,12 +51,12 @@ const Header = async () => {
                         )}
                     </ul>
                 </div>
-                {/*<div className='flex items-center space-x-4'>*/}
-                {/*    <ModeToggle/>*/}
-                {/*    {data.session && (*/}
-                {/*        <ProfileDropdown session={data.session}/>*/}
-                {/*    )}*/}
-                {/*</div>*/}
+                <div className='flex items-center space-x-4'>
+                    <ModeToggle/>
+                    {data.session && (
+                        <ProfileDropdown session={data.session}/>
+                    )}
+                </div>
             </nav>
         </header>
     );

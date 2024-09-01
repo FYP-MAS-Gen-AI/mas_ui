@@ -137,7 +137,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         if (selectedTab === 'Chatbot') {
             return 'w-1/3';
         }
-        return 'w-64';
+        return 'w-80';
     };
 
     return (

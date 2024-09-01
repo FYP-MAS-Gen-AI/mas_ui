@@ -74,6 +74,7 @@ export default function Create({user}: { user: any }) {
     const handleGenerateImage = async () => {
         setIsLoading(true); // Start loading state
         console.log("Generating image with input:", inputValue);
+        console.log("Mode", mode);
 
         try {
             if (mode === 'Edit (Inpaint/Outpaint)') {

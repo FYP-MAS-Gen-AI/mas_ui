@@ -25,6 +25,7 @@ interface DesignProps {
     setAspectRatio: React.Dispatch<React.SetStateAction<string>>;
     stylePreset: string;
     setStylePreset: React.Dispatch<React.SetStateAction<string>>;
+    // prompt: string;
 }
 
 const stylePresetLabels: { [key: string]: string } = {
@@ -127,7 +128,8 @@ const Design: React.FC<DesignProps> = ({
                                            aspectRatio,
                                            setAspectRatio,
                                            stylePreset = "none",
-                                           setStylePreset
+                                           setStylePreset,
+                                            // prompt
                                        }) => {
 
     // const [imageInfo, setImageInfo] = useState({width: 0, height: 0, size: 0});
@@ -158,29 +160,80 @@ const Design: React.FC<DesignProps> = ({
         }
     }, [imageUrl]);
 
-    const downloadImage = (imageUrl: string) => {
+    const downloadImage = (imageUrl: string, height: number, width: number, prompt: string) => {
         const img = new Image();
         img.src = imageUrl;
         img.crossOrigin = 'Anonymous'; // This is important if the image is hosted on a different domain
 
         img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = dimensions.width;
-            canvas.height = dimensions.height;
-            const ctx = canvas.getContext('2d');
+            const originalWidth = img.width;
+            const originalHeight = img.height;
 
-            if (ctx) {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                const url = canvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'image.png'; // Customize the filename here
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            console.log("Width:", width, "Height:", height);
+            console.log("Image Width:", originalWidth, "Image Height:", originalHeight);
+            if (height > originalHeight || width > originalWidth) {
+                // If the provided dimensions are larger, convert the image to base64
+                const canvas = document.createElement('canvas');
+                canvas.width = originalWidth;
+                canvas.height = originalHeight;
+                const ctx = canvas.getContext('2d');
+
+                if (ctx) {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const base64Image = canvas.toDataURL('image/png');
+
+                    fetch('http://localhost:8000/upscale', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            image_b64: base64Image.split(',')[1],
+                            prompt: prompt
+                        }), // Remove the data URL prefix
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Success:', data);
+                            if (data[0] && data[0].image_b64) {
+                                // Create a download link for the upscaled image);
+                                const upscaledImage = data[0].image_b64;
+                                const link = document.createElement('a');
+                                console.log('Image Successfully Upscaled:');
+                                link.href = `data:image/png;base64,${upscaledImage}`;
+                                link.download = 'upscaled_image.png'; // Customize the filename here
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            } else {
+                // If the dimensions are smaller or equal, proceed with downloading the image
+                const canvas = document.createElement('canvas');
+                canvas.width = dimensions.width;
+                canvas.height = dimensions.height;
+                const ctx = canvas.getContext('2d');
+
+                if (ctx) {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const url = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'image.png'; // Customize the filename here
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
             }
         };
+
+        img.onerror = (err) => {
+            console.error('Failed to load image:', err);
+        };
     };
+
 
     const options = modelOptions[selectedModel as keyof typeof modelOptions] || {};
 
@@ -221,7 +274,7 @@ const Design: React.FC<DesignProps> = ({
                         </div>
                     )}
                     {options.style_preset && (
-                        <div>
+                        <div className="mt-4">
                             <label className="font-bold">Style Presets:</label>
                             <select
                                 value={stylePreset}
@@ -287,7 +340,7 @@ const Design: React.FC<DesignProps> = ({
                     type="number"
                     value={dimensions.width}
                     onChange={handleWidthChange}
-                    className="w-16 mx-2 p-2 border rounded"
+                    className="w-24 mx-2 p-2 border rounded"
                 />
                 <span>🔗</span>
                 <input
@@ -301,12 +354,12 @@ const Design: React.FC<DesignProps> = ({
                     type="number"
                     value={dimensions.height}
                     onChange={handleHeightChange}
-                    className="w-16 ml-2 p-2 border rounded"
+                    className="w-24 ml-2 p-2 border rounded"
                 />
             </div>
             <div className="mt-4">
                 <button
-                    onClick={() => downloadImage(imageUrl)}
+                    onClick={() => downloadImage(imageUrl, dimensions.height, dimensions.width, "fabric pattern design")}
                     className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
                 >
                     Download Image
